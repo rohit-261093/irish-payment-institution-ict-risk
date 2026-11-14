@@ -99,4 +99,35 @@ Under the **CBI Individual Accountability Framework (`IAF/SEAR`)** and **Ireland
 | Governance Domain | Board Risk Committee (`INEDs`) | CEO (`PCF-1`) & CRO (`PCF-14`) | CTO (`PCF-46`) & Engineering (1st Line) | MLRO / Head of Compliance (`PCF-52`) | Head of ICT & InfoSec Risk (2nd Line) | Internal Audit (3rd Line) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Impact Tolerances, Risk Appetite & `ICT-SAT` Approval** | **A** | **C** | **C** | **C** | **R** | **I** |
-| **Asset Protection, Crypto, PAM & CI/CD Security Gates** | **I** | **I** | **R / A**
+| **Asset Protection, Crypto, PAM & CI/CD Security Gates** | **I** | **I** | **R / A** | **I** | **C (Oversight)** | **I** |
+| **DORA Incident Triage & 4-Hour CBI Portal Notifications** | **I** | **A (Major Escalation)** | **R (Containment)** | **C (Regulatory Filing)** | **R (Triage & Filing)** | **I** |
+| **Quarterly BCDR Failover Drills & TIBER-IE Remediation** | **A (TLPT Sign-Off)** | **C** | **R (Execution & Fix)** | **I** | **R (Programme Lead)** | **C (Assurance)** |
+| **DORA `Art. 30` Contracts, EBA RoI Filing & Exit Drills** | **A (RoI Approval)** | **C** | **C (Exit Portability)** | **C** | **R** | **I** |
+| **EU AI Act Deployer Inventory, FRIAs & Vendor Assurance** | **I** | **A (`AI-002` Credit)** | **R (`ZDR` DLP & Kill-Switch)** | **A (`AI-001/004/005`)** | **R (Inventory & Gate)** | **I** |
+
+*(**R** = Responsible, **A** = Accountable, **C** = Consulted, **I** = Informed)*
+
+---
+
+## 7. Complete Catalogue of Operational Workbooks (12 Registers)
+
+| Pillar | Excel Workbook Filename | Embedded Dashboard & Operational Tabs |
+| :--- | :--- | :--- |
+| **Pillar 1** | [`pillar-01-cibs-impact-tolerances.xlsx`](pillar-01-governance-and-impact-tolerances/pillar-01-cibs-impact-tolerances.xlsx) | `Executive_Dashboard` · `CIBS_and_CIF_Inventory` · `Dependency_Mapping` · `Impact_Tolerances` |
+| **Pillar 1** | [`pillar-01-board-governance-and-harm-calibration.xlsx`](pillar-01-governance-and-impact-tolerances/pillar-01-board-governance-and-harm-calibration.xlsx) | `Governance_Dashboard` · `Time_Bucket_Harm_Matrix` · `Board_Governance_And_Training` · `Risk_Exceptions_Register` |
+| **Pillar 2** | [`pillar-02-asset-crypto-and-pam-scope.xlsx`](pillar-02-ict-protection-and-change-control/pillar-02-asset-crypto-and-pam-scope.xlsx) | `Protection_Dashboard` · `ICT_Asset_CIBS_Inventory` · `Cryptographic_Key_Lifecycle` · `PAM_Access_Recertification` |
+| **Pillar 2** | [`pillar-02-vuln-and-change-gate-tracker.xlsx`](pillar-02-ict-protection-and-change-control/pillar-02-vuln-and-change-gate-tracker.xlsx) | `Vuln_Change_Dashboard` · `Vulnerability_SLA_Tracker` · `CICD_Change_Gate_Log` |
+| **Pillar 3** | [`pillar-03-dora-incident-cbi-clock.xlsx`](pillar-03-incident-response-and-cbi-reporting/pillar-03-dora-incident-cbi-clock.xlsx) | `Incident_Clock_Dashboard` · `DORA_RTS_Threshold_Triage` · `CBI_4h_72h_30d_Tracker` |
+| **Pillar 3** | [`pillar-03-crisis-comms-and-capa-log.xlsx`](pillar-03-incident-response-and-cbi-reporting/pillar-03-crisis-comms-and-capa-log.xlsx) | `Crisis_CAPA_Dashboard` · `Client_Art19_Comms_Log` · `RCA_And_CAPA_Closure_Log` · `Minor_Incident_Aggregation` |
+| **Pillar 4** | [`pillar-04-resilience-testing-scorecard.xlsx`](pillar-04-resilience-testing-and-tiber-ie/pillar-04-resilience-testing-scorecard.xlsx) | `Testing_Dashboard` · `Annual_Resilience_Test_Plan` · `BCDR_Failover_Scorecard` |
+| **Pillar 4** | [`pillar-04-pentest-and-tiber-ie-tracker.xlsx`](pillar-04-resilience-testing-and-tiber-ie/pillar-04-pentest-and-tiber-ie-tracker.xlsx) | `TLPT_Remediation_Dashboard` · `Art27_Tester_Independence` · `TIBER_IE_And_Pentest_Findings` |
+| **Pillar 5** | [`pillar-05-dora-roi-and-concentration.xlsx`](pillar-05-third-party-risk-and-dora-roi/pillar-05-dora-roi-and-concentration.xlsx) | `DORA_RoI_Dashboard` · `EBA_DPM4_Contract_Register` · `Fourth_Party_Concentration` |
+| **Pillar 5** | [`pillar-05-vendor-ddq-art30-and-exit.xlsx`](pillar-05-third-party-risk-and-dora-roi/pillar-05-vendor-ddq-art30-and-exit.xlsx) | `Vendor_Assurance_Dashboard` · `Vendor_Security_DDQ_And_Art30` · `Stressed_Exit_Plan_Register` |
+| **Pillar 6** | [`pillar-06-eu-ai-act-inventory-and-fria.xlsx`](pillar-06-eu-ai-act-governance/pillar-06-eu-ai-act-inventory-and-fria.xlsx) | `AI_Governance_Dashboard` · `EU_AI_Act_System_Inventory` · `Art26_Deployer_And_FRIA_Gate` |
+| **Pillar 6** | [`pillar-06-vendor-ai-assurance-and-llm-dlp.xlsx`](pillar-06-eu-ai-act-governance/pillar-06-vendor-ai-assurance-and-llm-dlp.xlsx) | `Vendor_AI_And_DLP_Dashboard` · `Quarterly_Vendor_AI_Assurance` · `GenAI_And_Shadow_AI_Gate` |
+
+---
+
+## 8. Industry Reference Frameworks & Community Benchmarks
+* **Supervisory & Statutory Standards:** Central Bank of Ireland **Cross-Industry Guidance on Operational Resilience**, **Cross-Industry Guidance on Outsourcing**, **ICT Self-Assessment Tool (`ICT-SAT`)**, **TIBER-IE** Threat-Led Penetration Testing Framework, **EBA DORA Register of Information Data Point Model (`DPM 4.0`)**, **EU Artificial Intelligence Act (Regulation (EU) 2024/1689)**, and **Ireland's Regulation of Artificial Intelligence Act 2026 (Act 31 of 2026)**.
+* **Community AI Governance Reference:** [Taimur Ijlal — AI Governance Repository](https://github.com/taimurijlal/AIGovernance) *(Benchmarked for general AI policy structure, model risk checklists, and ISO/IEC 42001 alignment concepts).*
