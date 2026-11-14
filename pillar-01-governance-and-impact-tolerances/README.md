@@ -1,60 +1,63 @@
 ---
-title: Irish Regulated Payment Institution — Head of Security & ICT Risk Playbook
+title: Pillar 1 — Resilience Governance, Business Service Mapping & Impact Tolerances
 ---
 
-# Irish Regulated Payment Institution (PI/EMI)
-### Practical Security Leadership, Operational Resilience & AI Governance Playbook
-
-An operator's blueprint for running **Information Security, ICT Risk, and Regulatory Compliance** inside a **Central Bank of Ireland (CBI)–authorised Payment Institution**, designed from the perspective of a **Head of Security / ICT & InfoSec Risk reporting directly to the CTO**.
-
-Rather than theoretical frameworks or bloated policy manuals, this repository contains the **day-to-day leadership artefacts** used to keep payment rails resilient, unblock product and engineering teams, and maintain continuous readiness for Central Bank of Ireland supervisory reviews across **DORA**, **PSD2/PSD3**, **PCI-DSS v4.0**, and the **EU AI Act**.
+# Pillar 1: Resilience Governance, Business Service Mapping & Impact Tolerances
+**Regulatory Basis:** DORA Chapter II (Articles 5–6) · Central Bank of Ireland (CBI) Cross-Industry Guidance on Operational Resilience · CBI Individual Accountability Framework (IAF / SEAR)
 
 ---
 
-## 1. Operating Philosophy: Security as a Commercial Enabler
-In a lean, fast-moving Irish fintech, security cannot function as a department of "no." Every playbook in this repository follows four practical rules:
-* **Protect the Crown Jewels First:** Concentrate engineering effort on what can actually sink a Payment Institution—**SEPA Instant availability**, **cardholder data (CDE) isolation**, and **daily `D+1` safeguarding of customer funds**.
-* **Fast-Track Low-Risk Work, Gate High-Risk Work:** Give product teams self-service guardrails for routine changes while enforcing hard stops on unvetted third-party data sharing, high-risk AI models, and safeguarding ledger changes.
-* **No Silent Risk Deferrals:** Engineering can defer a non-critical patch for business reasons, but every exception requires a compensating control, a hard expiry date (`<= 90 days`), and explicit sign-off.
-* **Always Audit-Ready for the CBI:** Evidence for DORA, safeguarding (`ISAE 3000`), and ICT inspections is generated as a by-product of normal operations—not assembled in a panic two weeks before a regulatory visit.
+## 1. Core Governance Rules
+1. **External CIBS vs. Internal CIFs:** Under CBI Operational Resilience Guidance, **Critical or Important Business Services (CIBS)** are strictly *external-facing* services delivered to customers or merchants (such as SEPA Instant transfers or card authorization). Internal systems and vendors supporting those services (such as the Core Ledger, Cloud HSM, or AWS hosting) are mapped as **Critical or Important Functions (CIFs)** under DORA.
+2. **Risk Appetite vs. Impact Tolerance:** **Risk Appetite** is the internal amber early-warning threshold where engineering and 2nd Line intervene. **Impact Tolerance** is the hard red ceiling (RTO/RPO) beyond which disruption causes intolerable harm to customers, the firm's safeguarding obligations, or market integrity.
+3. **No Silent Risk Deferrals:** Engineering cannot defer resilience or security fixes informally. Every exception requires documented compensating controls, a hard expiry date (`<= 90 calendar days`), and formal sign-off from the **Head of ICT & InfoSec Risk** and accountable **PCF**.
 
 ---
 
-## 2. Core Leadership Playbooks (Repository Guide)
+## 2. End-to-End Operating Process & Decision Gates
 
-| Playbook | Purpose & Audience | What It Solves on Monday Morning |
+1. **Step 1 — Service Classification (New Product / Annual Review):**
+   * Product and 2nd Line ICT Risk classify every customer-facing capability to determine whether disruption would cause intolerable customer or financial harm, assigning a `CIBS` ID.
+   * **Hard Gate:** No new payment rail, card product, or customer API goes live in production without an approved CIBS mapping and assigned PCF owner.
+2. **Step 2 — End-to-End Dependency Mapping:**
+   * Engineering maps every person, core application, cloud availability zone, third-party vendor, and fourth-party subcontractor required to deliver each CIBS inside **`CIBS_Dependency_Matrix`**.
+   * **Hard Gate:** Any single point of failure (SPOF) across cloud regions, HSM clusters, or safeguarding banks triggers a mandatory remediation plan or formal Risk Exception.
+3. **Step 3 — Board Impact Tolerance & Risk Appetite Calibration:**
+   * The Head of ICT Risk proposes amber **Risk Appetite** warning triggers and hard red **Impact Tolerances (RTO/RPO)** for annual approval by the **Board Risk Committee**.
+4. **Step 4 — Exception Governance & Annual CBI Self-Assessment:**
+   * Temporary control gaps are logged in **`Risk_Exception_Register`** with a mandatory 90-day expiry. Any expired exception automatically escalates to the Board Risk Committee.
+   * Annually, empirical failover results and exception trends feed into the Board-approved **CBI Operational Resilience Self-Assessment**.
+
+---
+
+## 3. RACI & CBI PCF Accountability Matrix
+
+| Governance Activity | Board Risk Committee (PCF-3/5) | CEO (PCF-1/8) | CTO (1st Line Tech) | Head of ICT Risk (2nd Line) | Head of Safeguarding (PCF-56) | MLRO (PCF-52) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **CIBS Identification & Impact Tolerance Approval** | **A** | **R** | **C** | **R** | **C** | **C** |
+| **System, Cloud & Vendor Dependency Mapping** | **I** | **I** | **R** | **A / Challenge** | **C** | **C** |
+| **Safeguarding Ledger Tolerance & Sweep SLAs** | **I** | **A** | **R** | **C** | **R** | **I** |
+| **Risk Exception Sign-Off (Low / Medium Residual)** | **I** | **I** | **R** | **A** | **C** | **C** |
+| **Risk Exception Sign-Off (High Residual Risk)** | **A** | **C** | **R** | **R** | **C** | **C** |
+| **Annual CBI OpRes Self-Assessment & DORA Art. 5 Sign-Off** | **A** | **R** | **C** | **R** | **C** | **C** |
+
+*(**R** = Responsible, **A** = Accountable, **C** = Consulted, **I** = Informed)*
+
+---
+
+## 4. Target Governance Outcomes & KPIs
+
+| Metric / Outcome | Target Benchmark | How It Is Measured |
 | :--- | :--- | :--- |
-| **[01. 30-60-90 Day Head of Security Execution Plan](playbooks/01-30-60-90-day-execution-plan.md)** | **CTO, CEO & Board** | Maps exact priorities across Months 1–3: auditing DORA RoI and safeguarding controls, clearing quick-win engineering bottlenecks, and running an executive incident tabletop. |
-| **[02. 1-Page Board & CTO Risk Report](playbooks/02-board-and-cto-risk-report.md)** | **Board Risk Committee & Executive Team** | Replaces 40-page technical slide decks with a single executive view of RAG posture, top ICT risks, patch SLA trends, and formal risk acceptance sign-offs. |
-| **[03. "2 AM" Incident & CBI Reporting Playbook](playbooks/03-2am-incident-and-cbi-reporting-playbook.md)** | **On-Call Engineering, Ops & Legal** | Step-by-step crisis checklist for a SEPA outage, vendor breach, or safeguarding break—defining who joins the call, DORA severity thresholds, and the **4-hour CBI notification clock**. |
-| **[04. Fast-Track Vendor & AI Review Checklist](playbooks/04-fast-track-vendor-and-ai-review.md)** | **Product, Procurement & Engineering** | Lightweight intake gate for onboarding SaaS tools and vetting AI features—separating **EU AI Act Art. 50** chatbots from **Annex III** credit scoring and enforcing **DORA Art. 30** clauses. |
-| **[05. CBI Supervisory Inspection Readiness Binder](playbooks/05-cbi-supervisory-readiness-binder.md)** | **CBI Supervisors & External Auditors** | Master evidence index covering the DORA Register of Information, signed bank safeguarding letters, disaster recovery test results, and pen-test closure logs. |
+| **CIBS Dependency Coverage** | `100%` of external payment & safeguarding services mapped | Annual Board sign-off on `CIBS_Dependency_Matrix` |
+| **Failover Recovery Margin** | Actual test recovery `<= 75%` of Board Impact Tolerance | `Tolerance Margin (Mins)` column in `CIBS_Dependency_Matrix` |
+| **Risk Exception Discipline** | `0` expired exceptions without Board Risk Committee escalation | `Governance Status` formula in `Risk_Exception_Register` |
+| **Supervisory Readiness** | `100%` on-time annual **CBI Operational Resilience Self-Assessment** | Board Risk Committee minutes & submission log |
 
 ---
 
-## 3. Irish & EU Regulatory Scope (What Matters in Practice)
-
-| Regulation | Irish Supervisory Reality | Practical Control Ownership |
-| :--- | :--- | :--- |
-| **DORA & CBI Operational Resilience** | Active supervision via **CBI Portal** annual Register of Information (RoI) submissions, **ICT-SAT** returns, 4-hour major incident reporting, and **TIBER-IE** testing. | Maintain a clean vendor/LEI register, test failover recovery against Board impact tolerances, and run deterministic incident triage. |
-| **PSD2 → PSD3 / PSR & Safeguarding** | Zero CBI tolerance for safeguarding breaks (`D+1` segregation, daily reconciliations, multi-bank concentration) alongside **Verification of Payee (VoP)** and APP fraud controls. | Enforce database controls preventing negative balance netting, automate daily `camt.053` matching, and log all VoP/SCA outcomes. |
-| **EU AI Act & Irish AI Act 2026** | Supervised in financial services by the **Central Bank of Ireland**; **Art. 4** (AI literacy) and **Art. 50** (chatbot transparency) are live now, with **Annex III** high-risk rules due Dec 2027. | Keep a single AI register distinguishing **Annex III high-risk credit scoring** from **excluded fraud-detection models**, with strict PII/PAN redaction on external LLMs. |
-| **PCI-DSS v4.0** | Strict focus on Cardholder Data Environment (CDE) scope reduction, HSM key management, and payment page script integrity (`Req. 6.4.3` & `11.6.1`). | Keep raw PANs isolated inside a third-party tokenization vault so core microservices remain out of CDE scope. |
-| **CBI Individual Accountability (IAF)** | Clear accountability across Pre-Approval Controlled Functions—including **CEO (PCF-1)**, **Board Risk Chair (PCF-5)**, **MLRO (PCF-52)**, and **Head of Safeguarding (PCF-56)**. | Tie every risk exception, safeguarding break, and critical vendor relationship to a named executive owner. |
-
----
-
-## 4. Supporting Operational Trackers (`.xlsx`)
-Alongside the narrative playbooks above, the [`trackers/`](trackers/) folder contains ready-to-use Excel registers with built-in formulas, RAG conditional formatting, and executive summary charts:
-* [`cibs-impact-tolerances.xlsx`](trackers/cibs-impact-tolerances.xlsx) — Business service impact tolerances (`RTO/RPO`) and 90-day risk exception tracker.
-* [`ict-asset-vuln-sla-tracker.xlsx`](trackers/ict-asset-vuln-sla-tracker.xlsx) — CVSS/KEV vulnerability SLA calculator and pre-release change gate log.
-* [`dora-incident-cbi-clock.xlsx`](trackers/dora-incident-cbi-clock.xlsx) — DORA major incident threshold calculator generating exact `4h` and `72h` CBI deadlines.
-* [`resilience-testing-tiber-ie.xlsx`](trackers/resilience-testing-tiber-ie.xlsx) — BCDR failover scorecard and TIBER-IE red-team remediation tracker.
-* [`dora-roi-and-vendor-exit.xlsx`](trackers/dora-roi-and-vendor-exit.xlsx) — EBA DPM 4.0 vendor register with 20-character LEI validation and exit drill schedule.
-* [`safeguarding-psd3-ai-register.xlsx`](trackers/safeguarding-psd3-ai-register.xlsx) — Daily `D+1` safeguarding reconciliation log and EU AI Act system inventory.
-
----
-
-## 5. Industry Reference Benchmarks
-* **Supervisory Standards:** Central Bank of Ireland **ICT Self-Assessment Tool (ICT-SAT)**, **TIBER-IE** Framework, **EBA DORA Register of Information (DPM 4.0)**, and Ireland's **Regulation of Artificial Intelligence Act 2026**.
-* **Community AI Governance Reference:** [Taimur Ijlal — AI Governance Repository](https://github.com/taimurijlal/AIGovernance) *(Referenced for general AI policy checklists and ISO/IEC 42001 structure).*
+## 5. Supporting Excel Register
+All live service mappings, tolerance thresholds, and active 90-day exceptions are maintained in **[`pillar-01-cibs-impact-tolerances.xlsx`](pillar-01-cibs-impact-tolerances.xlsx)** across three tabs:
+* **`Executive_Summary`:** KPI summary cards and Tolerance vs. Actual Failover chart.
+* **`CIBS_Dependency_Matrix`:** Master mapping of external business services, DORA CIFs, cloud regions, PCF owners, and RTO/RPO limits.
+* **`Risk_Exception_Register`:** 90-day exception log with automatic expiry countdowns and RAG status alerts.
