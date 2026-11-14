@@ -66,16 +66,5 @@ flowchart TD
 ## 4. Industry Reference Frameworks & Community Benchmarks
 * **Supervisory & Technical Standards:** Central Bank of Ireland **ICT Self-Assessment Tool (ICT-SAT)**, **TIBER-IE** Threat-Led Penetration Testing Framework, **EBA DORA RoI Data Point Model (DPM 4.0)**, and Ireland's **Regulation of Artificial Intelligence Act 2026** (*Oifig IS na hÉireann*).
 
-
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: false, theme: 'default' });
-  document.querySelectorAll('pre > code.language-mermaid, .language-mermaid pre code').forEach((el) => {
-    const container = el.closest('div.language-mermaid') || el.parentElement;
-    const div = document.createElement('div');
-    div.className = 'mermaid';
-    div.textContent = el.textContent;
-    container.replaceWith(div);
-  });
   await mermaid.run();
 </script>
