@@ -14,39 +14,28 @@ Built from a **Head of Security / Head of ICT & InfoSec Risk** perspective, this
 ## 1. Closed-Loop Digital Operational Resilience Architecture
 
 ```mermaid
-flowchart TB
-    subgraph P1["Pillar 1: Governance, IBS & Impact Tolerances (DORA Ch. II / CBI IAF)"]
-        IBS["Important Business Services (IBS) & Impact Tolerances<br/>(SEPA Instant RTO < 30m | Safeguarding Ledger RTO < 2h)"]
-    end
+flowchart TD
+    P1["<b>Pillar 1: Resilience Governance &amp; Impact Tolerances</b><br/>DORA Ch. II · CBI OpRes Guidance · IAF/SEAR<br/><i>IBS Mapping · SEPA RTO 30m · Safeguarding RTO 2h</i>"]
 
-    subgraph P2["Pillar 2: ICT Protection & Change Gates (DORA Art. 7–14 / PCI-DSS v4.0)"]
-        PROT["CMDB Asset-to-IBS Tagging, CI/CD Security Gates,<br/>CVSS/EPSS Patch SLAs & CDE Tokenization"]
-    end
+    P2["<b>Pillar 2: ICT Protection &amp; Change Gates</b><br/>DORA Art. 7–14 · PCI-DSS v4.0 · EU AI Act Art. 15<br/><i>CMDB Tagging · CI/CD Gates · 7-Day Critical Patch SLA</i>"]
 
-    subgraph P3["Pillar 3: Detection & 4-Hour CBI Incident Engine (DORA Ch. III)"]
-        INC["SIEM/APM Telemetry -> 45m Quantitative RTS Triage -> 4h CBI Portal Clock"]
-    end
+    P5["<b>Pillar 5: ICT Third-Party Risk &amp; DORA RoI</b><br/>DORA Ch. V · EBA DPM 4.0 · CBI Outsourcing<br/><i>CIF Intake · XBRL RoI Validator · Exit Tabletop Drills</i>"]
 
-    subgraph P4["Pillar 4: Resilience Testing & TIBER-IE (DORA Ch. IV)"]
-        TEST["Quarterly BCDR Failover Drills & TIBER-IE Threat-Led Penetration Testing"]
-    end
+    P3["<b>Pillar 3: Detection &amp; 4-Hour CBI Incident Engine</b><br/>DORA Ch. III · RTS on Major Incidents<br/><i>SIEM Telemetry · 45m RTS Triage · 4h CBI Portal Clock</i>"]
 
-    subgraph P5["Pillar 5: ICT Third-Party Risk & DORA RoI (DORA Ch. V / EBA DPM 4.0)"]
-        TPRM["Vendor Intake Gates, XBRL RoI Validator, 4th-Party Concentration & Exit Drills"]
-    end
+    P4["<b>Pillar 4: Resilience Testing &amp; TIBER-IE</b><br/>DORA Ch. IV · TIBER-IE Framework<br/><i>Quarterly BCDR Failover · Red-Team TLPT Closure</i>"]
 
-    subgraph P6["Pillar 6: Threat Intel & Sectoral Controls (DORA Ch. VI / PSD3 / EU AI Act)"]
-        SEC["FS-ISAC / CBI Threat Feeds, Daily D+1 Safeguarding Invariants & AI Guardrails"]
-    end
+    P6["<b>Pillar 6: Threat Intel, Payments &amp; AI Controls</b><br/>DORA Ch. VI · PSD3/PSR · CBI Safeguarding · EU AI Act<br/><i>FS-ISAC Feeds · Daily D+1 Ledger Checks · AI Guardrails</i>"]
 
-    IBS --> PROT & TPRM
-    PROT & TPRM --> INC
-    INC --> TEST
-    TEST -.->|Lessons Learned & Tolerance Calibration| IBS
-    SEC <--> PROT & INC
+    P1 --> P2
+    P1 --> P5
+    P2 --> P3
+    P5 --> P3
+    P3 --> P4
+    P4 -.->|Tolerance Calibration| P1
+    P6 <--> P2
+    P6 <--> P3
 ```
-
----
 
 ## 2. The 6-Pillar Operating Matrix (Processes, Outcomes & Artifacts)
 
