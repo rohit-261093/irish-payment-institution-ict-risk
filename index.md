@@ -1,21 +1,21 @@
 ---
-title: Irish Regulated Payment Institution (PI/EMI) — ICT Risk, Operational Resilience & AI Governance Blueprint
+title: Irish Regulated Payment Institution (PI/EMI) — 6-Pillar ICT Risk, Operational Resilience & EU AI Act Blueprint
 ---
 
 # Irish Regulated Payment Institution (PI/EMI)
 ### 6-Pillar Operational Resilience, ICT Risk & EU AI Act Operating System
 
-An operator-first governance and execution blueprint demonstrating how a **Central Bank of Ireland (CBI)–authorised Payment Institution** operationalises **DORA (Chapters II–V)**, **CBI Cross-Industry Operational Resilience & Outsourcing Guidance**, **CBI Individual Accountability Framework (IAF/SEAR)**, and the **EU AI Act / Ireland's Regulation of Artificial Intelligence Act 2026** across real-time SEPA Instant and payment rails.
+An operator-first governance and execution blueprint demonstrating how a **Central Bank of Ireland (CBI)–authorised Payment Institution** operationalises **DORA (Regulation (EU) 2022/2554, Chapters II–V)**, **CBI Cross-Industry Operational Resilience & Outsourcing Guidance**, **CBI Individual Accountability Framework (IAF/SEAR)**, and the **EU AI Act (Regulation (EU) 2024/1689) / Ireland's Regulation of Artificial Intelligence Act 2026** across real-time SEPA Instant, card acquiring, and cross-border payment rails.
 
-Built from a **Head of Security / Head of ICT & InfoSec Risk** perspective, each pillar pairs a **plain-English operating guide (`README.md`)**—defining end-to-end workflows, hard decision gates, RACI accountability, and target KPIs—with **formula-driven Excel registers (`.xlsx`)** ready for Board Risk Committee reporting and CBI supervisory inspections.
+Built from a **Head of Security / Head of ICT & InfoSec Risk** perspective, this repository moves beyond static policy statements. Each pillar pairs a **plain-English operating guide (`README.md`)**—defining end-to-end workflows, hard engineering and contractual decision gates, RACI accountability, and target KPIs—with **12 formula-driven Excel registers (`.xlsx`)** ready for Board Risk Committee reporting, internal audit challenge, and CBI supervisory inspections.
 
 ---
 
-## 1. Repository Architecture
+## 1. Repository Architecture & File Tree
 
 ```text
 irish-payment-institution-ict-risk/
-├── index.md                                                             # Master 6-pillar operating matrix & navigation
+├── index.md                                                             # Master 6-pillar operating architecture & supervisory matrix
 ├── pillar-01-governance-and-impact-tolerances/                          # [COMPLETE] DORA Ch. II, CBI OpRes & IAF/SEAR
 │   ├── README.md
 │   ├── pillar-01-cibs-impact-tolerances.xlsx
@@ -36,7 +36,7 @@ irish-payment-institution-ict-risk/
 │   ├── README.md
 │   ├── pillar-05-dora-roi-and-concentration.xlsx
 │   └── pillar-05-vendor-ddq-art30-and-exit.xlsx
-└── pillar-06-eu-ai-act-governance/                                      # [COMPLETE] EU AI Act (Reg. 2024/1689 Art. 26 Deployer)
+└── pillar-06-eu-ai-act-governance/                                      # [COMPLETE] EU AI Act Art. 26 Deployer & Irish AI Act 2026
     ├── README.md
     ├── pillar-06-eu-ai-act-inventory-and-fria.xlsx
     └── pillar-06-vendor-ai-assurance-and-llm-dlp.xlsx
