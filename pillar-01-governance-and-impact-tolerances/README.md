@@ -61,5 +61,8 @@ flowchart LR
 
 ---
 
-## 5. Machine-Readable Configuration
-The live dependency mappings, tolerance thresholds, and active 90-day risk exceptions governing these services are codified in [`ibs-impact-tolerance-model.yaml`](ibs-impact-tolerance-model.yaml).
+## 5. Operational Excel Register & Executive Dashboard
+The live dependency mappings, Board Impact Tolerance thresholds, and active 90-day risk exceptions governing these services are maintained in [`pillar-01-cibs-impact-tolerances.xlsx`](pillar-01-cibs-impact-tolerances.xlsx), which includes:
+* **`Executive_Summary` Tab:** Automated KPI cards and a clustered column chart benchmarking Board Impact Tolerances against actual failover recovery times.
+* **`CIBS_Dependency_Matrix` Tab:** End-to-end mapping of external CIBS (`CIBS-01` to `CIBS-05`) to supporting DORA CIFs, cloud regions, PCF owners, and automated tolerance margin formulas.
+* **`Risk_Exception_Register` Tab:** Time-bound 90-day exception log with automated expiry countdowns (`=Expiry_Date - TODAY()`) and Board escalation triggers.
