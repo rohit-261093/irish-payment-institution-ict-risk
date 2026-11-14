@@ -65,16 +65,3 @@ flowchart TD
 This operating blueprint aligns with Irish/EU supervisory standards and benchmarks against open-source security governance resources:
 * **Supervisory & Technical Standards:** Central Bank of Ireland **ICT Self-Assessment Tool (ICT-SAT)**, **TIBER-IE** Threat-Led Penetration Testing Framework, **EBA DORA RoI Data Point Model (DPM 4.0)**, and Ireland's **Regulation of Artificial Intelligence Act 2026** (*Oifig IS na hÉireann*).
 * **Community AI Governance Reference:** [Taimur Ijlal — AI Governance Repository](https://github.com/taimurijlal/AIGovernance) *(Benchmarked for general AI policy structure, model risk checklists, and ISO/IEC 42001 alignment concepts).*
-
-<script type="module">
-  import mermaid from '[https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs](https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs)';
-  mermaid.initialize({ startOnLoad: false, theme: 'default' });
-  document.querySelectorAll('pre > code.language-mermaid, .language-mermaid pre code').forEach((el) => {
-    const container = el.closest('div.language-mermaid') || el.parentElement;
-    const div = document.createElement('div');
-    div.className = 'mermaid';
-    div.textContent = el.textContent;
-    container.replaceWith(div);
-  });
-  await mermaid.run();
-</script>
