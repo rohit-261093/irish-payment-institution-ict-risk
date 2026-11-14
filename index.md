@@ -1,65 +1,78 @@
 ---
-title: Irish Regulated Payment Institution (PI/EMI)
+title: Irish Regulated Payment Institution (PI/EMI) — Digital Operational Resilience Blueprint
 ---
 
 # Irish Regulated Payment Institution (PI/EMI)
-### Enterprise ICT Risk, Security Architecture & AI Governance Blueprint
+### 6-Pillar Digital Operational Resilience, Payment Security & AI Governance Operating System
 
-An executive reference architecture demonstrating how a Central Bank of Ireland (CBI)–authorised Payment Institution operationalises **DORA**, **PSD2/PSD3 re-authorisation**, the **EU AI Act**, and **PCI-DSS v4.0** across real-time SEPA Instant and card payment workflows. Designed from a **Head of Security / Head of ICT & InfoSec Risk** lens—connecting technical controls, third-party concentration management, and safeguarding resilience directly to Board and Individual Accountability Framework (IAF/SEAR) oversight.
+An executive reference architecture demonstrating how a **Central Bank of Ireland (CBI)–authorised Payment Institution** operationalises **DORA (Chapters II–VI)**, **CBI Cross-Industry Operational Resilience Guidance**, **PSD2/PSD3 re-authorisation**, **PCI-DSS v4.0**, and the **EU AI Act / Regulation of Artificial Intelligence Act 2026** across real-time SEPA Instant and card acquiring workflows.
 
----
-
-## Quick Navigation (Interview Walkthrough)
-* [1. Irish Regulatory & Supervisory Alignment](#1-irish-regulatory--supervisory-alignment)
-* [2. End-to-End Payment & AI Security Architecture](#2-end-to-end-payment--ai-security-architecture)
-* [3. Governance Artifacts & Runbooks](#3-governance-artifacts--runbooks)
-* [4. Executive Risk Trade-Offs (Head of ICT Risk Lens)](#4-executive-risk-trade-offs-head-of-ict-risk-lens)
+Built from a **Head of Security / Head of ICT & InfoSec Risk** perspective, this repository moves beyond static policy checklists—defining **closed-loop operational workflows**, **hard engineering decision gates**, **result-oriented SLA/KRI matrices**, and **executable validation scripts**.
 
 ---
 
-## 1. Irish Regulatory & Supervisory Alignment
-
-| Regulatory Pillar | Irish / EU Instrument | Head of ICT & InfoSec Risk Accountability |
-| :--- | :--- | :--- |
-| **Digital Operational Resilience** | **DORA** (Reg. (EU) 2022/2554) & **CBI ICT-SAT** | Management-body approved ICT Risk Framework, **Register of Information (RoI)** for ICT third parties, 4-hour/72-hour CBI major incident reporting, and **TIBER-IE** TLPT readiness. |
-| **Payments Licensing & Fraud** | **PSD2** → **PSD3 / PSR** Transition | Strong Customer Authentication (SCA), **Verification of Payee (VoP)** IBAN/name checks, APP fraud monitoring, and safeguarding account resilience under unified PI/EMI rules. |
-| **AI & Algorithmic Governance** | **EU AI Act** (Reg. (EU) 2024/1689) | Enterprise AI inventory, **Annex III** high-risk classification (separating credit scoring from excluded fraud-detection models), **Art. 50** chatbot transparency, and human override controls. |
-| **Cardholder Data Security** | **PCI-DSS v4.0** | Cardholder Data Environment (CDE) isolation via hosted tokenization vaults, HSM key management, and client-side script integrity. |
-| **Executive Accountability** | **CBI IAF / SEAR** | Clear Three Lines of Defence mapping linking ICT & InfoSec risk ownership to Pre-Approval Controlled Functions (PCFs) and Board Risk Committees. |
-
----
-
-## 2. End-to-End Payment & AI Security Architecture
+## 1. Closed-Loop Digital Operational Resilience Architecture
 
 ```mermaid
-flowchart LR
-    subgraph Channels["1. Customer & Merchant Channels"]
-        APP["Mobile Banking App<br/>(Device Binding + Biometric SCA)"]
-        API["Merchant / Partner API<br/>(mTLS + OAuth2 + Rate Limiting)"]
+flowchart TB
+    subgraph P1["Pillar 1: Governance, IBS & Impact Tolerances (DORA Ch. II / CBI IAF)"]
+        IBS["Important Business Services (IBS) & Impact Tolerances<br/>(SEPA Instant RTO < 30m | Safeguarding Ledger RTO < 2h)"]
     end
 
-    subgraph Edge["2. Edge & Fraud / AI Control Plane"]
-        WAF["API Gateway & WAF"]
-        VOP["Verification of Payee (VoP)<br/>IBAN / Name Match"]
-        FRAUD["Real-Time Fraud & AML Engine<br/>(EU AI Act Governed + Human Override)"]
+    subgraph P2["Pillar 2: ICT Protection & Change Gates (DORA Art. 7–14 / PCI-DSS v4.0)"]
+        PROT["CMDB Asset-to-IBS Tagging, CI/CD Security Gates,<br/>CVSS/EPSS Patch SLAs & CDE Tokenization"]
     end
 
-    subgraph Core["3. Core Payment & Card Rails"]
-        LEDGER["Core Payment Ledger<br/>(Critical ICT Function)"]
-        SAFE["Safeguarding Accounts<br/>(Tier-1 Irish/EU Credit Institutions)"]
-        SEPA["SEPA / SEPA Instant Clearing"]
-        VAULT["PCI-DSS v4.0 Token Vault & HSM<br/>(CDE Isolated)"]
-        SCHEME["Visa / Mastercard Networks"]
+    subgraph P3["Pillar 3: Detection & 4-Hour CBI Incident Engine (DORA Ch. III)"]
+        INC["SIEM/APM Telemetry -> 45m Quantitative RTS Triage -> 4h CBI Portal Clock"]
     end
 
-    subgraph Gov["4. 2nd Line Assurance & CBI Reporting"]
-        DORA["DORA Telemetry & RoI<br/>(4hr CBI Incident Clock)"]
-        BOARD["Board Risk Committee & PCF Oversight"]
+    subgraph P4["Pillar 4: Resilience Testing & TIBER-IE (DORA Ch. IV)"]
+        TEST["Quarterly BCDR Failover Drills & TIBER-IE Threat-Led Penetration Testing"]
     end
 
-    APP & API --> WAF --> VOP --> FRAUD
-    FRAUD -->|Approved A2A| LEDGER
-    LEDGER <--> SAFE
-    LEDGER --> SEPA
-    FRAUD -->|Approved Card| VAULT --> SCHEME
-    LEDGER & VAULT & FRAUD -.->|Continuous KRIs & Logs| DORA --> BOARD
+    subgraph P5["Pillar 5: ICT Third-Party Risk & DORA RoI (DORA Ch. V / EBA DPM 4.0)"]
+        TPRM["Vendor Intake Gates, XBRL RoI Validator, 4th-Party Concentration & Exit Drills"]
+    end
+
+    subgraph P6["Pillar 6: Threat Intel & Sectoral Controls (DORA Ch. VI / PSD3 / EU AI Act)"]
+        SEC["FS-ISAC / CBI Threat Feeds, Daily D+1 Safeguarding Invariants & AI Guardrails"]
+    end
+
+    IBS --> PROT & TPRM
+    PROT & TPRM --> INC
+    INC --> TEST
+    TEST -.->|Lessons Learned & Tolerance Calibration| IBS
+    SEC <--> PROT & INC
+```
+
+---
+
+## 2. The 6-Pillar Operating Matrix (Processes, Outcomes & Artifacts)
+
+| Pillar & Repository Module | Regulatory Anchor | Defined End-to-End Process & Gates | Result-Oriented Target Outcomes | Executable / Structured Artifact |
+| :--- | :--- | :--- | :--- | :--- |
+| **[Pillar 1: Resilience Governance & Impact Tolerances](pillar-01-governance-and-impact-tolerances/README.md)** | **DORA Ch. II (Art. 5–6)**, **CBI OpRes Guidance**, & **CBI IAF / SEAR** | IBS identification → End-to-end dependency mapping → Board Impact Tolerance setting → Time-bound Risk Exception Gate (`<= 90d`). | • SEPA Instant RTO `< 30m` (RPO `0` txn loss)<br>• `100%` of risk exceptions tied to PCF owner & expiry | `ibs-impact-tolerance-model.yaml` |
+| **[Pillar 2: ICT Protection & Change Control](pillar-02-ict-protection-and-change-control/README.md)** | **DORA Ch. II (Art. 7–14)**, **PCI-DSS v4.0**, & **EU AI Act Art. 15** | Asset-to-IBS tagging → Automated CI/CD & AI-egress gates → EPSS/CVSS triage → Patch SLA enforcement & virtual patch fallback. | • Critical (`CVSS >= 9.0`) patched `< 7d` (`>= 95%` SLA)<br>• `0` unencrypted CDE/PII stores in production | `sla-breach-detector.py` |
+| **[Pillar 3: Incident Response & CBI 4-Hour Clock](pillar-03-incident-response-and-cbi-reporting/README.md)** | **DORA Ch. III (Art. 17–23)** & **DORA RTS on Major Incidents** | Alert trigger → 30m technical triage → 45m quantitative RTS threshold gate → CBI Portal initial notice (`< 4h`), `72h` intermediate, `30d` RCA. | • Mean Time to Classify (MTTC) `< 45 mins`<br>• `100%` on-time CBI statutory portal submissions | `dora-incident-classifier.py` |
+| **[Pillar 4: Resilience Testing & TIBER-IE](pillar-04-resilience-testing-and-tiber-ie/README.md)** | **DORA Ch. IV (Art. 24–27)** & **TIBER-IE Framework** | Annual risk-based test plan → Quarterly BCDR failover drills → **TIBER-IE** red-team scoping, purple-team replay & closure gate. | • Failover recovery `<= 75%` of Impact Tolerance<br>• `100%` of TIBER-IE critical findings closed `< 60d` | `bcdr-test-scorecard.json` |
+| **[Pillar 5: Third-Party Risk & DORA RoI](pillar-05-third-party-risk-and-dora-roi/README.md)** | **DORA Ch. V (Art. 28–44)**, **EBA DPM 4.0**, & **CBI Outsourcing** | Intake & CIF triage → Art. 30 contractual gate → EBA XBRL RoI schema validation → Concentration scoring → Annual stressed exit drill. | • Onboarding SLA reduced from `25d` to `<= 7d`<br>• `0` EBA/CBI Portal XBRL validation rejections | `dora-roi-validator.py` |
+| **[Pillar 6: Threat Intel, Payments & AI Controls](pillar-06-threat-intel-payments-and-ai/README.md)** | **DORA Ch. VI**, **PSD3 / PSR**, **CBI Safeguarding**, & **EU AI Act** | Threat feed ingestion → Daily `D+1` safeguarding ledger reconciliation → Verification of Payee (VoP) logging → AI Annex III & Art. 50 guardrails. | • `0` unresolved safeguarding breaks `> €0.01` past `T+1`<br>• Fraud AI human override `< 15m` (`>= 98%` SLA) | `safeguarding-ledger-invariants.sql` |
+
+---
+
+## 3. Executive Outcome Scorecard (Board Risk Appetite Benchmarks)
+
+| Governance Dimension | Baseline (Legacy / Manual) | Target Operating State | Supervisory / Audit Proof |
+| :--- | :--- | :--- | :--- |
+| **CBI DORA Register of Information (RoI)** | Manual spreadsheet aggregation; high risk of LEI/parent validation errors during March CBI Portal window | Automated ingestion pipeline with pre-submission XBRL/LEI validation (`0` EBA rejections) | Annual **CBI Portal XBRL Return** & **CBI ICT-SAT** evidence pack |
+| **Safeguarding Account Integrity (PCF-56)** | End-of-month manual bank statement checks; risk of negative sub-ledger netting | Automated daily `camt.053` reconciliation with hard DB schema floor (`balance >= 0.00`) | Daily immutable reconciliation logs & annual **ISAE 3000** reasonable assurance report |
+| **Major ICT Incident Classification** | Ad-hoc severity calls risking breach of DORA's 4-hour initial CBI reporting clock | Deterministic RTS threshold calculator triggered within 45 minutes of detection | Timestamped triage logs & CBI Portal submission receipts |
+| **Enterprise AI & Shadow AI Governance** | Uninventoried SaaS AI features; unclear Annex III credit vs. fraud classification | Central AI Inventory mapped to **Regulation of AI Act 2026**, **Art. 50** disclosures live, egress DLP enforced | **CBI Market Surveillance** readiness pack & human-override audit trail |
+
+---
+
+## 4. Industry Reference Frameworks & Community Benchmarks
+This operating blueprint aligns with Irish/EU supervisory standards and benchmarks against open-source security governance resources:
+* **Supervisory & Technical Standards:** Central Bank of Ireland **ICT Self-Assessment Tool (ICT-SAT)**, **TIBER-IE** Threat-Led Penetration Testing Framework, **EBA DORA RoI Data Point Model (DPM 4.0)**, and Ireland's **Regulation of Artificial Intelligence Act 2026** (*Oifig IS na hÉireann*).
+* **Community AI Governance Reference:** [Taimur Ijlal — AI Governance Repository](https://github.com/taimurijlal/AIGovernance) *(Benchmarked for general AI policy structure, model risk checklists, and ISO/IEC 42001 alignment concepts).*
