@@ -1,73 +1,69 @@
 ---
-title: Pillar 1 — Resilience Governance, Business Service Mapping & Impact Tolerances
+title: Pillar 1 — Operational Resilience Governance, CIBS & Impact Tolerances
 ---
 
-# Pillar 1: Resilience Governance, Business Service Mapping & Impact Tolerances
-**Regulatory Basis:** DORA Chapter II (Articles 5–6) · Central Bank of Ireland (CBI) Cross-Industry Guidance on Operational Resilience · CBI Individual Accountability Framework (IAF / SEAR)
-
----
-
-## 1. Core Governance Rules
-1. **External CIBS vs. Internal CIFs:** Under CBI Operational Resilience Guidance, **Critical or Important Business Services (CIBS)** are strictly *external-facing* services delivered to customers or merchants (such as SEPA Instant transfers or card authorization). Internal systems and vendors supporting those services (such as the Core Ledger, Cloud HSM, or AWS hosting) are mapped as **Critical or Important Functions (CIFs)** under DORA.
-2. **Evidence-Based Harm Calibration:** Every Board-approved Impact Tolerance (`RTO/RPO`) must be backed by a documented time-bucket harm assessment across **Customer Harm**, **Safeguarding & Liquidity Harm**, and **Regulatory / Market Integrity Harm**—proving the exact point at which disruption becomes intolerable.
-3. **Board Article 5 & IAF Accountability:** Under DORA Article 5 and the CBI Individual Accountability Framework, the Board formally approves the ICT Risk Framework, ICT security budget/headcount adequacy, and annual Operational Resilience Self-Assessment, supported by mandatory annual DORA/AI training and quarterly PCF attestations.
-4. **No Silent Risk Deferrals:** Engineering cannot defer resilience or security fixes informally. Every exception requires documented compensating controls, a hard expiry date (`<= 90 calendar days`), and formal sign-off from the **Head of ICT & InfoSec Risk** and accountable **PCF**.
+# Pillar 1: Operational Resilience Governance, CIBS & Impact Tolerances
+**Regulatory Basis:** DORA Chapter II (Articles 5–6) · Central Bank of Ireland (CBI) Cross-Industry Guidance on Operational Resilience (Guidelines 1–7) · CBI Individual Accountability Framework (`IAF / SEAR`) · CBI ICT Self-Assessment Tool (`ICT-SAT`)
 
 ---
 
-## 2. End-to-End Operating Process & Decision Gates
+## 1. Why Pillar 1 Works This Way (Plain-English Q&A)
 
-1. **Step 1 — Service Classification (New Product / Annual Review):**
-   * Product and 2nd Line ICT Risk classify every customer-facing capability to determine whether disruption would cause intolerable customer or financial harm, assigning a `CIBS` ID.
-   * **Hard Gate:** No new payment rail, card product, or customer API goes live in production without an approved CIBS mapping and assigned PCF owner.
-2. **Step 2 — End-to-End Dependency Mapping:**
-   * Engineering maps every person, core application, cloud availability zone, third-party vendor, and fourth-party subcontractor required to deliver each CIBS inside **`CIBS_Dependency_Matrix`**.
-   * **Hard Gate:** Any single point of failure (SPOF) across cloud regions, HSM clusters, or safeguarding banks triggers a mandatory remediation plan or formal Risk Exception.
-3. **Step 3 — Time-Bucket Harm Calibration & Tolerance Approval:**
-   * 2nd Line ICT Risk and PCF owners score disruption impact across `15m`, `30m`, `1h`, `4h`, and `24h` intervals in **`Impact_Harm_Calibration`** to establish amber **Risk Appetite** triggers and hard red **Impact Tolerances (RTO/RPO)** for Board Risk Committee approval.
-4. **Step 4 — Exception Governance, IAF Attestations & Annual CBI Self-Assessment:**
-   * Temporary control gaps are logged in **`Risk_Exception_Register`** with a mandatory 90-day expiry. Any expired exception automatically escalates to the Board Risk Committee.
-   * Quarterly PCF attestations, annual Board DORA/AI training (`PCF_IAF_And_Board_Training`), and empirical failover results feed into the Board-approved **`CBI_OpRes_Self_Assessment`**.
+### Why start with "Critical or Important Business Services" (`CIBS`) instead of an IT server list?
+**Because regulators and customers care about disrupted payment outcomes, not individual servers.**
+If a microservice crashes silently and traffic fails over with zero customer impact, that is an IT event. If SEPA Instant clearing stops for 40 minutes, merchants cannot settle funds and the firm breaches its regulatory obligations. Pillar 1 anchors the entire 6-pillar operating system to five Board-approved **Critical or Important Business Services (`CIBS-01` to `CIBS-05`)**, ensuring every technical control in Pillars 2–6 is prioritized by external customer harm.
+
+### How do you decide whether an Impact Tolerance should be 30 minutes or 4 hours?
+**We calibrate disruption by time-bucket harm across four dimensions—never guesswork.**
+In [`pillar-01-board-governance-and-harm-calibration.xlsx`](pillar-01-board-governance-and-harm-calibration.xlsx), we model what happens at `15m`, `30m`, `2h`, `4h`, and `24h` across **Customer Harm**, **Financial/Liquidity Loss**, **Safeguarding Ledger Integrity**, and **Regulatory/Market Contagion**. The point where harm becomes intolerable sets our Board-approved Recovery Time Objective (`RTO`) and Recovery Point Objective (`RPO`).
+
+### What happens when a business team genuinely cannot fix a gap on time?
+**They must request a time-boxed Risk Exception that expires automatically at 90 days.**
+Silent risk acceptance is banned. Any control gap or overdue SLA requires a documented compensating control and an explicit expiry date (`<= 90 days`). Nothing can roll over silently—extending an exception past 90 days requires formal **Board Risk Committee** sign-off.
 
 ---
 
-## 3. RACI & CBI PCF Accountability Matrix
+## 2. End-to-End Operating Process & Hard Decision Gates
 
-| Governance Activity | Board Risk Committee (PCF-3/5) | CEO (PCF-1/8) | CTO (1st Line Tech) | Head of ICT Risk (2nd Line) | Head of Safeguarding (PCF-56) | MLRO (PCF-52) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **CIBS Identification, Harm Calibration & Tolerance Approval** | **A** | **R** | **C** | **R** | **C** | **C** |
-| **System, Cloud & Vendor Dependency Mapping** | **I** | **I** | **R** | **A / Challenge** | **C** | **C** |
-| **ICT Security Budget & Headcount Adequacy (DORA Art. 5)** | **A** | **R** | **R** | **C** | **I** | **I** |
-| **Safeguarding Ledger Tolerance & Sweep SLAs** | **I** | **A** | **R** | **C** | **R** | **I** |
-| **Risk Exception Sign-Off (Low / Medium Residual)** | **I** | **I** | **R** | **A** | **C** | **C** |
-| **Risk Exception Sign-Off (High Residual Risk)** | **A** | **C** | **R** | **R** | **C** | **C** |
-| **Annual CBI OpRes Self-Assessment & Quarterly IAF Attestations** | **A** | **R** | **R** | **R** | **R** | **R** |
+1. **Step 1 — External `CIBS` vs. Internal `CIF` Classification (`Annual & Product Launch`):**
+   * 2nd Line ICT Risk and Business Line Owners classify customer-facing payment rails (`CIBS-01` SEPA Instant, `CIBS-02` Card Acquiring, `CIBS-03` Safeguarding Ledger, `CIBS-04` Client Onboarding/Portal, `CIBS-05` Merchant Working Capital) separately from internal supporting functions (`CIFs`) in [`pillar-01-cibs-impact-tolerances.xlsx`](pillar-01-cibs-impact-tolerances.xlsx).
+   * **HARD GATE 1 (New Product / Rail Launch Gate):** No new payment rail or customer-facing product may launch into production until it is mapped to a `CIBS`, assigned an accountable `PCF` owner, and given a Board-approved `RTO/RPO`.
+2. **Step 2 — End-to-End Dependency Mapping (`Quarterly Refresh`):**
+   * Engineering maps every `CIBS` down to its supporting applications, AWS Availability Zones (`eu-west-1`), Cloud HSM clusters, clearing schemes, and critical third-party APIs (`Dependency_Mapping` tab).
+   * **HARD GATE 2 (Single-Point-of-Failure Gate):** Any `CIBS` dependency lacking active-active redundancy or a tested failover path is automatically flagged as a formal Risk Exception requiring remediation or Board waiver.
+3. **Step 3 — Time-Bucket Harm Calibration & Board Approval (`Annual`):**
+   * 2nd Line Risk runs workshops with Treasury, Safeguarding (`PCF-56`), and Operations to calibrate disruption harm across `15m–24h` buckets (`Time_Bucket_Harm_Matrix` tab) and submits `RTO/RPO` tolerances to the Board Risk Committee.
+4. **Step 4 — `IAF/SEAR` Attestations, `ICT-SAT` & 90-Day Risk Exception Governance (`Quarterly`):**
+   * Pre-Approval Controlled Function (`PCF`) holders complete quarterly "Reasonable Steps" attestations, and 2nd Line Risk completes the annual **CBI `ICT-SAT`** maturity self-assessment (`Board_Governance_And_Training` tab).
+   * **HARD GATE 3 (90-Day Risk Exception Expiry Gate):** Any risk exception in `Risk_Exceptions_Register` reaching `90 days` without closure is automatically flagged `EXPIRED - BOARD ESCALATION` and escalated to the next Board Risk Committee meeting.
+
+---
+
+## 3. RACI & Accountability Matrix (`IAF / SEAR`)
+
+| Pillar 1 Governance Activity | Board Risk Committee | CEO (`PCF-1`) & CRO (`PCF-14`) | Safeguarding (`PCF-56`) & MLRO (`PCF-52`) | CTO (`PCF-46`) & Engineering | Head of ICT & InfoSec Risk (2nd Line) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Annual `CIBS` & Impact Tolerance (`RTO/RPO`) Approval** | **A** | **C** | **C** | **C** | **R** |
+| **End-to-End Dependency Mapping (`Apps / Cloud / Vendors`)** | **I** | **I** | **C** | **R** | **A (Challenge)** |
+| **Time-Bucket Harm Calibration & `ICT-SAT` Submission** | **A** | **C** | **C** | **C** | **R** |
+| **Risk Exception Approval (`<= 90 Days`)** | **I** | **A (`PCF-14`)** | **C** | **C (Control Plan)** | **R (Review)** |
+| **Risk Exception Renewal (`> 90 Days`)** | **A** | **C** | **I** | **C** | **R (Escalation)** |
 
 *(**R** = Responsible, **A** = Accountable, **C** = Consulted, **I** = Informed)*
 
 ---
 
-## 4. Target Governance Outcomes & KPIs
+## 4. Target Pillar 1 KPIs
 
-| Metric / Outcome | Target Benchmark | How It Is Measured |
+| Metric / Outcome | Target Benchmark | Workbook & Formula Verification |
 | :--- | :--- | :--- |
-| **CIBS Dependency & Harm Justification** | `100%` of external business services mapped & time-bucket calibrated | `CIBS_Dependency_Matrix` & `Impact_Harm_Calibration` tabs |
-| **Failover Recovery Margin** | Actual test recovery `<= 75%` of Board Impact Tolerance | `Tolerance Margin (Mins)` column in `CIBS_Dependency_Matrix` |
-| **Risk Exception Discipline** | `0` expired exceptions without Board Risk Committee escalation | `Governance Status` formula in `Risk_Exception_Register` |
-| **Board & PCF Accountability** | `100%` annual DORA/AI training & quarterly IAF attestations on time | `PCF_IAF_And_Board_Training` compliance status |
-| **Supervisory Readiness** | `100%` on-time annual **CBI Operational Resilience Self-Assessment** | `CBI_OpRes_Self_Assessment` maturity tracker & Board minutes |
+| **`CIBS` Impact Tolerance Compliance** | `0` live disruptions breaching Board-approved `RTO` or `RPO` | `Impact_Tolerances` & `Executive_Dashboard` |
+| **Dependency Mapping Completeness** | `100%` of `CIBS-01`–`CIBS-05` mapped end-to-end (tech, cloud, vendors) | `Dependency_Mapping` tab |
+| **Expired Risk Exceptions** | `0` risk exceptions open `> 90 days` without Board Risk Committee renewal | `Exception Status` in `Risk_Exceptions_Register` |
+| **Board & Staff DORA / AI Literacy Training** | `100%` annual completion across Board `INEDs`, `PCFs`, and staff | `Board_Governance_And_Training` tab |
 
 ---
 
 ## 5. Supporting Excel Registers
-All live service mappings, harm calibrations, Board self-assessments, and active 90-day exceptions are maintained across two companion Excel workbooks in this folder:
-
-1. **[`pillar-01-cibs-impact-tolerances.xlsx`](pillar-01-cibs-impact-tolerances.xlsx)**
-   * **`Executive_Summary`:** KPI summary cards and Tolerance vs. Actual Failover chart.
-   * **`CIBS_Dependency_Matrix`:** Master mapping of external business services, DORA CIFs, cloud regions, PCF owners, and RTO/RPO limits.
-   * **`Risk_Exception_Register`:** 90-day exception log with automatic expiry countdowns and RAG status alerts.
-2. **[`pillar-01-board-governance-and-harm-calibration.xlsx`](pillar-01-board-governance-and-harm-calibration.xlsx)**
-   * **`Board_Governance_Dashboard`:** Executive maturity KPIs, training/attestation completion rates, and maturity chart.
-   * **`Impact_Harm_Calibration`:** Time-bucket harm scoring (`15m` to `24h`) justifying Board RTO thresholds.
-   * **`CBI_OpRes_Self_Assessment`:** Annual CBI Operational Resilience & DORA Article 5 maturity assessment.
-   * **`PCF_IAF_And_Board_Training`:** Annual DORA/AI training and quarterly CBI IAF/SEAR attestation log.
+1. **[`pillar-01-cibs-impact-tolerances.xlsx`](pillar-01-cibs-impact-tolerances.xlsx)** — `Executive_Dashboard` · `CIBS_and_CIF_Inventory` · `Dependency_Mapping` · `Impact_Tolerances`
+2. **[`pillar-01-board-governance-and-harm-calibration.xlsx`](pillar-01-board-governance-and-harm-calibration.xlsx)** — `Governance_Dashboard` · `Time_Bucket_Harm_Matrix` · `Board_Governance_And_Training` · `Risk_Exceptions_Register`
