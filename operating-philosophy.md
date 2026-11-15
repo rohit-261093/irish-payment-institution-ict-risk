@@ -1,74 +1,61 @@
 ---
-title: Operating Philosophy & Risk Decision Framework
+title: Operating Philosophy — Why We Work This Way
 ---
 
-# Operating Philosophy & Risk Decision Framework
-### How ICT Risk, Operational Resilience & AI Governance Work in Practice
+# Operating Philosophy: Why We Work This Way
+### Practical Answers on How We Prioritize Risk, Build Controls & Handle Crises
 
-Governance frameworks fail when they become static binders of rules that engineering teams work around and executives only read before an inspection. This document defines the **core operating philosophy and decision-making framework** behind the 6 pillars in this repository—explaining how risks are prioritized, how trade-offs are made under pressure, and how regulatory mandates (**DORA**, **Central Bank of Ireland Operational Resilience & Outsourcing Guidance**, **IAF/SEAR**, and the **EU AI Act / Irish AI Act 2026**) are translated into daily execution.
-
----
-
-## 1. The Five Core Operating Principles
-
-### Principle 1: Protect Customer Harm & Payment Rails—Not Just Servers
-We do not prioritize security and resilience work based on generic technical severity scores alone. Every risk decision starts from external customer impact and market integrity:
-* **Impact Tolerances Anchor Everything (`Pillar 1`):** Every asset, cryptographic key, vendor API, and AI tool is mapped to a Board-approved **Critical or Important Business Service (`CIBS-01` to `CIBS-05`)**.
-* **Practical Trade-Off Rule:** A `CVSS 7.5` vulnerability on an internet-facing SEPA Instant gateway (`CIBS-01`, `30-minute` impact tolerance) is remediated ahead of a `CVSS 9.8` flaw on an isolated internal marketing test environment.
-
-### Principle 2: Hard Gates Over Passive Policies
-Controls that rely on people remembering a 60-page policy during a busy release cycle or a live outage will eventually fail. Wherever possible, governance is embedded directly into existing workflows as **deterministic hard gates**:
-* **Change & DLP Gate (`Pillar 2`):** High-risk production releases cannot deploy without verified rollback procedures and automated `PAN`/`PII` egress checks.
-* **Incident Clock Gate (`Pillar 3`):** Any disruption touching a `CIBS` triggers a mandatory **45-minute threshold triage** to protect the Central Bank of Ireland's **4-hour initial reporting window**.
-* **Vendor & Contract Gate (`Pillar 5`):** Procurement cannot execute a contract or provision production API keys until `Article 30` mandatory clauses (CBI audit rights, EEA residency, exit assistance) are verified.
-* **AI Deployer Gate (`Pillar 6`):** Third-party AI APIs cannot go live without `Article 26` vendor instructions verification, `Article 27` FRIAs (where applicable), and `Article 50` customer disclosures.
-
-### Principle 3: Statutory Precision Over "Gold-Plating"
-Over-engineering compliance where the law does not require it burns engineering capacity and slows down product delivery. We apply strict legal and architectural precision so controls remain proportionate:
-* **100% Third-Party AI Deployer Focus (`Pillar 6`):** Because the institution **does not train or develop proprietary AI models in-house**, we do not build unnecessary model-training bureaucracy. Instead, we focus rigorously on **EU AI Act Article 26 Deployer duties**—preventing accidental `Article 25` reclassification as a Provider, separating excluded fraud/AML APIs (`Annex III Point 5(b)` carve-out) from high-risk credit and biometric eKYC APIs, and enforcing `15–60 minute` human override SLAs.
-* **Tiered Third-Party Scrutiny (`Pillar 5`):** Deep fourth-party hyperscaler concentration analysis and annual stressed exit tabletop drills are concentrated on `CIF`-critical providers rather than low-risk back-office SaaS tools.
-
-### Principle 4: Separate Technical Recovery from Regulatory Command in a Crisis
-During a severe outage—such as a core payment rail degradation or an enterprise-wide Microsoft 365 / Outlook outage—engineers cannot simultaneously debug root causes, calculate DORA reporting thresholds, and field client escalations:
-* **Parallel Tracks (`Pillar 3`):** 1st Line Engineering focuses 100% on technical containment and failover, while 2nd Line ICT Risk, Compliance, and Crisis Management run the **45-minute regulatory clock**, activate out-of-band communication channels, and enforce pre-approved manual workarounds.
-* **Stopping Improvised Risk:** During communication outages, staff are explicitly prohibited from improvising workarounds (such as routing payment instructions via personal email or unapproved messaging apps), backed by active CASB and DLP controls.
-
-### Principle 5: Translate Risk Both Ways—Engineering & The Board
-Effective risk leadership requires translating technical reality into clear executive trade-offs without losing precision:
-* **To Engineering & Product:** Regulatory articles are translated into concrete engineering tickets, patch SLAs (`<= 7 days` for critical/KEV flaws), failover margins (`<= 75%` of Board RTO), and API kill-switches.
-* **To the Board & PCF Holders (`IAF / SEAR`):** Technical telemetry is distilled into **risk appetite breaches, residual risk trends, overdue CAPAs, and cost-vs-resilience decisions**—giving Pre-Approval Controlled Function (`PCF`) holders clear, auditable evidence to discharge their statutory accountability.
+If you are reviewing this repository for the first time, you will see 6 operational pillars, 4 incident playbooks, an executive reporting pack, and 12 Excel registers. This page explains **the thinking behind the system**—why it is built this way and how we make real-world risk decisions.
 
 ---
 
-## 2. The Risk Prioritization & Decision Matrix
-
-When competing priorities, audit findings, or operational incidents arise, decisions are triaged using the four-tier model below:
-
-| Priority Tier | Trigger Condition | Required Decision & Escalation Path | Maximum SLA |
-| :--- | :--- | :--- | :--- |
-| **Tier 1: Immediate Stop / Crisis** | Active breach of a `CIBS` Impact Tolerance (`RTO/RPO`), confirmed data/PAN exposure, CISA KEV on an internet-facing `CIBS` asset, or high-risk AI malfunction (`Art. 26(5)`). | Trigger emergency containment / API kill-switch; start **45-min DORA triage**; notify `PCF-1` / `PCF-52` and file **4-hour CBI Portal notice** if thresholds are met. | **Immediate (`<= 45m` triage / `<= 4h` CBI filing)** |
-| **Tier 2: Hard Gate Hold** | Missing `DORA Art. 30` contract clause, unapproved `Annex III` AI API without `FRIA`, unauthorized checkout script, or expired `90-day` risk exception. | **Block go-live or contract signature** automatically; escalate to Head of ICT & InfoSec Risk or Board Risk Committee for formal waiver or remediation. | **Blocked until remediated** |
-| **Tier 3: Accelerated Remediation** | Critical vulnerability (`CVSS >= 9.0` non-KEV) on `CIBS` infrastructure, BCDR failover drill exceeding `75%` of RTO (`Tight Margin`), or TIBER-IE red-team finding. | Assign 1st Line engineering owner; track in Pillar 2/4 registers; verify closure via **Purple-Team replay** or re-test before closing. | **`<= 7 days` (Critical Vuln)** / **`<= 60 days` (TLPT)** |
-| **Tier 4: Planned Hygiene & Governance** | Medium/Low vulnerabilities on non-CIBS assets, annual `ICT-SAT` self-assessments, quarterly PAM recertifications, and rolling `365-day` vendor exit drills. | Execute within standard operational sprints and review quarterly at the Operational Resilience & Risk Committee. | **`30–90 days` (Scheduled)** |
+### 1. Why isn't this just a standard set of security policies?
+**Because policies don't stop bad releases or broken vendors—hard gates do.**
+In a regulated Irish Payment Institution, an 80-page PDF policy sitting on an intranet will not save you during a live payment outage or a Central Bank of Ireland (`CBI`) inspection. Instead, we embed controls directly into daily workflows as **non-negotiable gates**:
+* Code cannot ship to production without rollback proof and automated data-leakage (`DLP`) checks (**Pillar 2**).
+* A vendor contract cannot be signed until `DORA Article 30` audit rights and exit clauses are verified (**Pillar 5**).
+* A third-party AI tool cannot go live without `Article 26` instructions verification and a signed Fundamental Rights Impact Assessment (`FRIA`) where required (**Pillar 6**).
 
 ---
 
-## 3. Practical Trade-Offs: How Ambiguity Is Resolved
-
-In day-to-day operations, security and resilience requirements often collide with commercial urgency. Four standing rules govern how trade-offs are resolved:
-
-1. **Speed vs. Control on Vendor Onboarding:** Commercial teams need fast turnaround to sign payment partners and SaaS tools. Rather than holding every vendor for weeks, 2nd Line Risk enforces a **`<= 7 business day` fast-track SLA** for standard reviews—while maintaining an uncompromising **hard stop** on `Article 30` audit rights, EEA data residency, and `Zero-Data-Retention` AI terms.
-2. **Temporary Exceptions vs. Permanent Risk Acceptance:** When a deadline cannot be met (for example, a legacy vendor API delay), the business may request a **Risk Exception (`Pillar 1`)**—capped strictly at **90 days** with compensating controls. No exception can roll over silently; any renewal past 90 days requires explicit **Board Risk Committee** sign-off.
-3. **Automation vs. Human Oversight in AI:** Real-time fraud and AML screening (`AI-001`, `AI-005`) must operate at millisecond speed to protect SEPA Instant rails, whereas high-risk underwriting (`AI-002`) and biometric onboarding (`AI-004`) require deterministic **human-in-the-loop review queues (`15–60 mins`)** and instant fallback to deterministic rules if model anomalies occur.
-4. **Testing in Production vs. Operational Stability:** Resilience testing (`Pillar 4`) must prove real failover capability—not just tabletop theory—so active-active failover drills and TIBER-IE red-team exercises are executed against production-equivalent or live rails under strict **Rules of Engagement**, pre-vetted `Article 27` testers, and instant abort triggers.
+### 2. When everything looks urgent, how do you decide what gets fixed first?
+**We prioritize by customer harm and payment rail tolerances—not just technical severity scores.**
+We do not protect servers in the abstract; we protect **Critical or Important Business Services (`CIBS`)** like SEPA Instant (`30-minute` impact tolerance) and Card Acquiring (`45-minute` tolerance). 
+* **Practical example:** A `CVSS 7.5` vulnerability on an internet-facing SEPA Instant gateway gets patched ahead of a `CVSS 9.8` flaw on an isolated internal marketing test server. Every asset, vendor, and AI tool in this repository is tagged to a `CIBS` so engineering and risk teams always know what matters most.
 
 ---
 
-## 4. How This Philosophy Connects to the 6 Pillars
+### 3. Why are there no model-training or data-science validation logs in the AI pillar?
+**Because we are a 100% third-party AI Deployer—and over-engineering wastes time and money.**
+We do not train or build proprietary AI models in-house (`0` trained models). Under the **EU AI Act** and **Ireland's Regulation of Artificial Intelligence Act 2026**, that makes us a **Deployer (`Article 26`)**, not a **Provider**.
+* Rather than creating fake data-science bureaucracy, **Pillar 6** focuses strictly on what a Deployer actually controls: preventing accidental `Article 25` rebranding, separating fraud/AML tools (carved out under `Annex III Point 5(b)`) from high-risk credit and biometric eKYC APIs, enforcing `15–60 minute` human review queues, collecting quarterly vendor bias/audit packs, and blocking unsanctioned Shadow AI at the network proxy.
 
-* **[Pillar 1: Resilience Governance & Impact Tolerances](pillar-01-governance-and-impact-tolerances/README.md)** — Defines *what matters most* (`CIBS`), *how much disruption is tolerable* (`RTO/RPO`), and *who is accountable* (`IAF/SEAR`).
-* **[Pillar 2: ICT Protection & Change Control](pillar-02-ict-protection-and-change-control/README.md)** — Hardens the underlying assets, cryptographic keys, privileged access, and CI/CD release gates.
-* **[Pillar 3: Incident Response & CBI 4-Hour Clock](pillar-03-incident-response-and-cbi-reporting/README.md)** — Governs live crisis execution, deterministic DORA threshold triage, and regulatory/client communications.
-* **[Pillar 4: Resilience Testing & TIBER-IE TLPT](pillar-04-resilience-testing-and-tiber-ie/README.md)** — Proves empirically through failover drills and intelligence-led red-teaming that tolerances hold under stress.
-* **[Pillar 5: Third-Party Risk & DORA RoI](pillar-05-third-party-risk-and-dora-roi/README.md)** — Extends resilience and contractual control across critical cloud, banking, and SaaS dependencies.
-* **[Pillar 6: EU AI Act Deployer Governance](pillar-06-eu-ai-act-governance/README.md)** — Applies proportionate, deployer-specific oversight, `FRIA` gates, and egress DLP across third-party AI capabilities.
+---
+
+### 4. What happens when a major outage hits—like a payment rail failure or an enterprise Outlook outage?
+**We split technical recovery from regulatory command within the first 15 minutes.**
+During a live crisis, engineers cannot simultaneously debug infrastructure, calculate regulatory reporting thresholds, and answer client emails.
+* **Track 1 (1st Line Engineering):** Focuses 100% on containment, failover, or hitting the `60-second` API kill-switch (**Pillar 3 Playbooks**).
+* **Track 2 (2nd Line Risk & Compliance):** Runs the **45-minute DORA threshold triage** so we never miss the CBI's **4-hour initial reporting clock**, activates out-of-band communication channels (if Microsoft 365/Outlook is down), and enforces a strict freeze against staff improvising workarounds via personal email or unapproved apps.
+
+---
+
+### 5. What happens when a team genuinely cannot meet a security or compliance deadline?
+**We allow temporary, transparent exceptions—never silent workarounds.**
+Business urgency is real. If a legacy vendor API needs extra time to patch or migrate, the business can request a formal **Risk Exception (`Pillar 1`)**.
+* Every exception requires compensating controls and **expires automatically at 90 days**.
+* No exception can roll over quietly in the background—anything extending past 90 days requires explicit **Board Risk Committee** approval.
+
+---
+
+### 6. How do you bridge the gap between engineers and the Board (`IAF / SEAR`)?
+**By translating the same data into two different languages.**
+* **To Engineering & Product:** We translate DORA, CBI guidance, and the EU AI Act into concrete tickets, clear SLAs (`<= 7 days` for critical/KEV patches, `<= 30 minutes` RTO), and automated CI/CD checks.
+* **To the Board & PCF Holders (`IAF / SEAR`):** We roll those same metrics up into **10 Enterprise Key Risk Indicators (`executive-reporting/`)** showing whether we are inside Risk Appetite, which `CAPAs` are overdue, and clear evidence so Pre-Approval Controlled Function (`PCF`) holders can prove they took "Reasonable Steps" in their roles.
+
+---
+
+### Where to Go Next
+* **[`index.md`](index.md)** — View the master 6-pillar architecture, cross-pillar links, and all 12 Excel registers.
+* **[`executive-reporting/`](executive-reporting/README.md)** — See how operational metrics roll up into the Quarterly Board Risk Committee Pack and KRI Scorecard.
+* **[`pillar-03-incident-response-and-cbi-reporting/playbooks/`](pillar-03-incident-response-and-cbi-reporting/playbooks/)** — Inspect our step-by-step response playbooks for payment outages, ransomware, M365/Outlook disruptions, and AI malfunctions.
