@@ -1,85 +1,85 @@
 ---
-title: Pillar 3 — Incident Detection, Classification & CBI 4-Hour Reporting Clock
+title: Pillar 3 — Incident Response, Playbooks & The CBI 4-Hour Reporting Clock
 ---
 
-# Pillar 3: Incident Detection, Classification & CBI Reporting
-**Regulatory Basis:** DORA Chapter III (Articles 17–23) · EU Delegated Regulation 2024/1772 (Major Incident Classification) · EU Implementing Regulation 2025/302 (Reporting Templates) · Central Bank of Ireland (CBI) Cross-Industry Guidance on Operational Resilience (*Respond & Recover*, Guidelines 11–13)
-
----
-
-## 1. What Pillar 3 Means in Practice
-When a payment rail degrades or a security alert fires at 2:00 AM, engineers focus on restoring service—while the **Central Bank of Ireland (CBI)** enforces strict statutory clocks for incident classification, regulatory notification, and customer communication.
-
-Pillar 3 removes ambiguity during live incidents by enforcing three operational rules:
-1. **Separate Awareness vs. Classification Timestamps:** Under DORA, the **4-hour statutory clock** for submitting an Initial Notification via the **CBI Portal** starts at the exact minute the incident is *classified as Major* (with a hard outer ceiling of 24 hours from initial awareness). Internal triage must complete within **45 minutes** of detection.
-2. **Deterministic EU RTS 2024/1772 Threshold Triage:** Instead of subjective severity calls, incidents affecting `CIBS-01` to `CIBS-05` are scored against the six EU RTS materiality criteria. Either *malicious unauthorised access risking data loss* (`Art. 9(5)(b)`) OR breaching **two or more** quantitative thresholds classifies the event as **Major**.
-3. **Closed-Loop Recurring Incident & CAPA Review:** Minor incidents sharing a root cause within 6 months are aggregated monthly (`Art. 8(2)`), and every Major incident generates tracked Corrective & Preventive Actions (CAPAs) that feed back into Pillar 1 Impact Tolerances and Pillar 2 engineering controls.
+# Pillar 3: Incident Response, Playbooks & The CBI 4-Hour Reporting Clock
+**Regulatory Basis:** DORA Chapter III (Articles 17–23) · DORA RTS on Major Incident Classification (Delegated Regulation (EU) 2024/1772) · DORA ITS on Incident Reporting Templates (Implementing Regulation (EU) 2025/302) · Central Bank of Ireland (`CBI`) Operational Resilience Guidance (Guidelines 11–13) · GDPR Articles 33–34
 
 ---
 
-## 2. Regulatory Alignment Matrix (DORA & CBI Requirements)
+## 1. Why Pillar 3 Works This Way (Plain-English Q&A)
 
-| Regulatory Anchor | Specific Supervisory Requirement | How Pillar 3 Operationalises It |
-| :--- | :--- | :--- |
-| **DORA Art. 17–18** & **Delegated Reg. 2024/1772 (Art. 1–9)** | Classify ICT-related incidents using uniform materiality thresholds (clients affected, transaction value, downtime, cross-border EEA impact, economic cost, data/reputational loss). | **`DORA_RTS_Triage_Engine`:** Evaluates all six criteria automatically and outputs `MAJOR - CBI REPORTABLE` vs. `NON-MAJOR - INTERNAL`. |
-| **DORA Art. 19(1) & 19(4)** & **Implementing Reg. 2025/302** | Submit Initial Notification (`<= 4h` from classification / `<= 24h` from awareness), Intermediate Report (`<= 72h`), and Final RCA Report (`<= 1 month`) to the CBI Portal. | **`DORA_RTS_Triage_Engine`:** Auto-calculates exact statutory timestamps (`+4h`, `+72h`, `+30d`) the moment classification occurs. |
-| **DORA Delegated Reg. 2024/1772 Art. 8(2)** | Aggregate recurring non-major incidents with the same root cause over a 6-month rolling window and escalate if cumulative thresholds are met. | **`Recurring_Incident_Review`:** Monthly review log flagging repeat incident clusters whose cumulative downtime (`>= 120m`) or cost (`>= €100k`) triggers Major status. |
-| **DORA Art. 19(3)** & **CBI OpRes Guideline 11** | Notify clients without undue delay when an incident impacts their financial interests, and execute coordinated crisis communications. | **`Stakeholder_And_Client_Comms`:** Tracks client notices, GDPR 72h DPC notifications, and scheme/depositary bank escalations. |
-| **DORA Art. 20** & **CBI OpRes Guideline 13** | Conduct formal post-incident root cause analysis (RCA) and remediate control gaps so lessons learned update resilience tolerances. | **`Post_Incident_CAPA_Log`:** Tracks root-cause fixes and links each action back to Pillar 1 (`CIBS` / `Risk Exceptions`) and Pillar 2 controls. |
+### Why do you enforce a strict 45-minute triage clock when DORA gives 4 hours to notify the CBI?
+**Because waiting 3 hours to decide if an incident is "Major" guarantees a late regulatory filing.**
+Under **DORA Article 19(4)(a)**, once an ICT-related incident is classified as **Major**, the Payment Institution has just **4 hours** to submit its Initial Notification on the Central Bank of Ireland (`CBI`) Portal (and no more than `24 hours` from initial detection). If engineering and compliance spend three hours debating severity, there is zero time left to draft, review, and file an accurate notice. Our **45-minute classification hard gate** forces an early, deterministic decision.
 
----
+### Why separate technical recovery from regulatory command during an outage?
+**Because engineers debugging a live database failover cannot simultaneously calculate EU RTS thresholds or write client notices.**
+During any severe disruption, we split into two parallel tracks within 15 minutes: **1st Line Engineering** focuses 100% on technical containment and failover, while **2nd Line ICT Risk & Compliance (`PCF-52`)** run the DORA reporting clock, activate out-of-band communication channels, and enforce anti-fraud guardrails across operations.
 
-## 3. End-to-End "2 AM" Incident Response & CBI Clock Process
-
-1. **Step 1 — Detection & Technical Triage (`T+0` to `T+30 mins`):**
-   * Automated SIEM, APM, or synthetic payment probes trigger an alert; on-call engineering logs the exact **Awareness Timestamp** and begins containment.
-2. **Step 2 — Quantitative DORA RTS Classification (`<= T+45 mins`):**
-   * The Incident Commander and 2nd Line ICT Risk Duty Officer enter impact metrics into **`DORA_RTS_Triage_Engine`**.
-   * **Hard Gate:** Classification must be recorded within **45 minutes** of awareness. If malicious unauthorised access is confirmed OR `>= 2` quantitative thresholds are breached (`>= 10%` clients/daily value, `>= 120 mins` CIBS downtime, `>= 2` EEA Member States, `>= €100k` cost, or data/reputational breach), the incident is locked as **Major** and the 4-hour CBI clock starts immediately.
-3. **Step 3 — War Room, CBI Initial Notice (`<= +4h`) & Client Comms:**
-   * **< 2 Hours:** Issue client notification via status page / in-app banner if client financial interests or payment execution are impacted (`DORA Art. 19(3)`), logged in **`Stakeholder_And_Client_Comms`**.
-   * **< 4 Hours:** Head of ICT & InfoSec Risk submits the **Initial Notification** via the **Central Bank of Ireland Portal** (`Implementing Reg. 2025/302`) with CEO (`PCF-1`) / PCF-56 sign-off.
-   * **< 72 Hours:** Submit **Intermediate Report** to CBI Portal (and **DPC** notification if personal data breach is confirmed under GDPR Art. 33).
-4. **Step 4 — Final RCA (`<= 30 Days`) & Closed-Loop CAPA:**
-   * Within **30 calendar days** of classification, submit the **Final Root Cause Analysis Report** to the CBI Portal and log all corrective actions in **`Post_Incident_CAPA_Log`**.
+### What if an incident is minor—do you just close the ticket and move on?
+**No—recurring minor incidents must be aggregated monthly under DORA RTS `Article 8(2)`.**
+A series of small 10-minute payment timeouts that individually fall below Major thresholds can collectively indicate a systemic flaw. Every minor incident is logged in [`pillar-03-crisis-comms-and-capa-log.xlsx`](pillar-03-crisis-comms-and-capa-log.xlsx) (`Minor_Incident_Aggregation`) and reviewed monthly to catch recurring patterns before they cause a major outage.
 
 ---
 
-## 4. "2 AM" Crisis RACI & Accountability Matrix
+## 2. End-to-End Operating Process & Hard Decision Gates
 
-| Incident & Reporting Activity | On-Call Tech Lead (1st Line) | Incident Commander (Ops / CTO) | Head of ICT & InfoSec Risk (2nd Line) | CEO (PCF-1) / Safeguarding (PCF-56) | Legal / DPO / Compliance |
+1. **Step 1 — Detection, Containment & Scenario Playbook Activation (`T+0 to T+15 Mins`):**
+   * Alerts from APM/SIEM, MDR, or third-party vendor status pages trigger immediate containment and activate the matching scenario playbook in [`playbooks/`](playbooks/):
+     * [`irp-01-core-payment-rail-outage.md`](playbooks/irp-01-core-payment-rail-outage.md) (SEPA Instant / Card Acquiring / AWS AZ failure)
+     * [`irp-02-ransomware-and-data-extortion.md`](playbooks/irp-02-ransomware-and-data-extortion.md) (Active intrusion, ransomware & out-of-band containment)
+     * [`irp-03-enterprise-m365-outlook-outage.md`](playbooks/irp-03-enterprise-m365-outlook-outage.md) (Enterprise Exchange Online outage, anti-BEC freeze & portal fallback)
+     * [`irp-04-third-party-ai-malfunction.md`](playbooks/irp-04-third-party-ai-malfunction.md) (EU AI Act `Art. 26(5)`/`73` API kill-switch & GenAI DLP breach)
+   * **HARD GATE 1 (Out-of-Band & Anti-Fraud Gate):** If corporate email/M365 (`IRP-03`) or domain identity (`IRP-02`) is affected, command immediately moves to Signal/Slack out-of-band bridges and an all-staff freeze is issued prohibiting personal email or consumer messaging workarounds.
+2. **Step 2 — Deterministic `DORA RTS 2024/1772` Threshold Triage (`T+15 to T+45 Mins`):**
+   * Head of ICT Risk scores the incident in [`pillar-03-dora-incident-cbi-clock.xlsx`](pillar-03-dora-incident-cbi-clock.xlsx) (`DORA_RTS_Threshold_Triage`) across all EU RTS criteria: malicious unauthorized access, clients/transactions affected, EUR value impacted, `CIBS` duration vs. Board `RTO`, geographical spread, and data loss.
+   * **HARD GATE 2 (45-Minute Classification Deadline):** Classification (`MAJOR` vs. `MINOR`) must be locked within **45 minutes** of detection. Any confirmed malicious intrusion touching `CIBS` infrastructure is presumed `MAJOR` automatically.
+3. **Step 3 — Statutory Filings (`4h` / `72h`) & Client Notifications (`DORA Art. 19(3)`):**
+   * For `MAJOR` incidents, `PCF-52` (Head of Compliance/MLRO) and Head of ICT Risk execute timestamped filings in `CBI_4h_72h_30d_Tracker`:
+     * **`<= 4 Hours` from Classification:** Initial Notification on **CBI Portal** + client/merchant advisory (`Client_Art19_Comms_Log`).
+     * **`<= 72 Hours` from Initial Notice:** Intermediate Report on **CBI Portal** (plus **GDPR `Art. 33` DPC filing** within `72h` if personal data is breached).
+   * **HARD GATE 3 (Dual-Sign-Off Regulatory Filing Gate):** No CBI Portal or DPC filing may be submitted without joint review by Head of ICT Risk (technical accuracy) and `PCF-52` (regulatory completeness).
+4. **Step 4 — 30-Day Root Cause Analysis (`RCA`), `CAPA` Closure & Minor Aggregation (`T+Recovery to T+30d`):**
+   * Within **30 calendar days**, the Final Report (`DORA Art. 19(4)(c)`) is filed on the CBI Portal, and permanent corrective actions (`CAPAs`) are tracked to verified closure in [`pillar-03-crisis-comms-and-capa-log.xlsx`](pillar-03-crisis-comms-and-capa-log.xlsx) (`RCA_And_CAPA_Closure_Log`).
+   * **HARD GATE 4 (30-Day `CAPA` Closure Gate):** Any `CAPA` remaining open past `30 days` automatically flags `OVERDUE - ESCALATE` for the monthly Operational Risk & Resilience Committee (`ORRC`) and feeds directly into Pillar 4's next resilience test cycle.
+
+---
+
+## 3. RACI & Accountability Matrix
+
+| Pillar 3 Incident & Reporting Activity | CEO (`PCF-1`) & CRO (`PCF-14`) | Head of Compliance / MLRO (`PCF-52`) | CTO (`PCF-46`) & SRE / SecOps | DPO | Head of ICT & InfoSec Risk (2nd Line) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **Technical Containment & Service Restoration** | **R** | **A** | **I** | **I** | **I** |
-| **45-Min DORA RTS Severity Classification** | **C** | **R** | **A** | **I** | **C** |
-| **Client Financial Impact Notice (`Art. 19(3)`)** | **I** | **C** | **C** | **A** | **R** |
-| **CBI Portal Initial (`4h`), Intermediate (`72h`) & RCA (`30d`)** | **C** | **C** | **R** | **A (Sign-Off)** | **C** |
-| **GDPR 72h DPC & Card Scheme / Bank Notices** | **I** | **I** | **C** | **A** | **R** |
-| **Post-Incident CAPA Closure & Pillar 1/2 Update** | **R** | **R** | **A / Verify** | **I** | **I** |
+| **Technical Containment, Failover & Kill-Switches** | **I** | **I** | **R / A** | **I** | **C** |
+| **45-Minute `DORA RTS 2024/1772` Classification Triage** | **I** | **C** | **C (Impact Data)** | **C** | **R / A** |
+| **CBI Portal Filings (`4h` Initial / `72h` Interm. / `30d` Final)** | **A (Major Escalation)** | **R / A (Submitter)** | **C** | **C** | **R (Technical Lead)** |
+| **GDPR `Art. 33` DPC Breach Notification (`<= 72h`)** | **I** | **C** | **C** | **R / A** | **C** |
+| **Client & Merchant Notifications (`DORA Art. 19(3)`)** | **A** | **C (Legal Review)** | **I** | **C** | **R** |
+| **30-Day `RCA`, `CAPA` Closure & Monthly `Art. 8(2)` Rollup** | **I** | **C** | **R (Fix Execution)** | **I** | **A (Verification)** |
 
 *(**R** = Responsible, **A** = Accountable, **C** = Consulted, **I** = Informed)*
 
 ---
 
-## 5. Target Incident & Reporting KPIs
+## 4. Target Pillar 3 KPIs
 
-| Metric / Outcome | Target Benchmark | How It Is Measured |
+| Metric / Outcome | Target Benchmark | Workbook & Formula Verification |
 | :--- | :--- | :--- |
-| **Mean Time to Classify (MTTC)** | `100%` of incidents classified within `45 minutes` | `MTTC (Mins)` column in `DORA_RTS_Triage_Engine` |
-| **CBI Statutory Reporting Timeliness** | `100%` of `4h`, `72h`, and `30d` CBI Portal filings on time | Calculated statutory timestamps in `DORA_RTS_Triage_Engine` |
-| **Client & DPC Notification Compliance** | `100%` of `Art. 19(3)` client notices & `72h` DPC filings met | `Comms Compliance Verdict` in `Stakeholder_And_Client_Comms` |
-| **Recurring Minor Incident Review** | `100%` monthly Art. 8(2) cluster aggregation completed | `Recurring_Incident_Review` escalation status |
-| **Post-Incident CAPA Closure** | `100%` of Major incident CAPAs closed within `30 days` | `Remediation Status` in `Post_Incident_CAPA_Log` |
+| **Mean Time to Classify (`MTTC`)** | `<= 45 minutes` from initial detection (`100%` within gate) | `Triage Minutes` in `DORA_RTS_Threshold_Triage` |
+| **On-Time CBI Portal Regulatory Filings** | `100.0%` on-time `4-hour`, `72-hour`, and `30-day` submissions | `Filing SLA Status` in `CBI_4h_72h_30d_Tracker` |
+| **30-Day `RCA` & `CAPA` Closure Rate** | `100.0%` of post-incident `CAPAs` verified closed within `30 days` | `CAPA Status` in `RCA_And_CAPA_Closure_Log` |
+| **Monthly Minor Incident Aggregation (`Art. 8(2)`)** | `100.0%` monthly review of recurring minor incidents | `Minor_Incident_Aggregation` tab |
 
 ---
 
-## 6. Supporting Excel Registers
-All live incident classifications, statutory CBI deadlines, crisis communication logs, and post-incident CAPAs are maintained across two companion Excel workbooks in this folder:
+## 5. Scenario Playbooks & Supporting Excel Registers
 
-1. **[`pillar-03-dora-incident-cbi-clock.xlsx`](pillar-03-dora-incident-cbi-clock.xlsx)**
-   * **`Incident_Command_Dashboard`:** KPI summary cards and MTTC vs. 45-minute SLA chart.
-   * **`DORA_RTS_Triage_Engine`:** Automated EU Delegated Reg. 2024/1772 threshold evaluator and `+4h / +72h / +30d` CBI deadline calculator.
-   * **`Recurring_Incident_Review`:** 6-month rolling aggregation tracker for recurring minor incidents (`Art. 8(2)`).
-2. **[`pillar-03-crisis-comms-and-capa-log.xlsx`](pillar-03-crisis-comms-and-capa-log.xlsx)**
-   * **`Comms_And_CAPA_Dashboard`:** Notification compliance KPIs and CAPA remediation chart.
-   * **`Stakeholder_And_Client_Comms`:** Audit log for DORA Art. 19(3) client notices, GDPR 72h DPC filings, and scheme/bank escalations.
-   * **`Post_Incident_CAPA_Log`:** Root-cause action register feeding lessons learned back into Pillars 1 and 2.
+### Scenario-Specific Incident Response Playbooks (`playbooks/`)
+1. **[`playbooks/irp-01-core-payment-rail-outage.md`](playbooks/irp-01-core-payment-rail-outage.md)** — SEPA Instant / Card Acquiring / AWS Availability Zone outage (`30-min` RTO protection & `RPO = 0` queue reconciliation).
+2. **[`playbooks/irp-02-ransomware-and-data-extortion.md`](playbooks/irp-02-ransomware-and-data-extortion.md)** — Destructive intrusion, volatile memory preservation, out-of-band Signal command, and dual CBI/DPC clocks.
+3. **[`playbooks/irp-03-enterprise-m365-outlook-outage.md`](playbooks/irp-03-enterprise-m365-outlook-outage.md)** — Third-party Exchange Online/Entra ID disruption, mandatory anti-BEC/Shadow-IT freeze, and Client Portal payment fallback.
+4. **[`playbooks/irp-04-third-party-ai-malfunction.md`](playbooks/irp-04-third-party-ai-malfunction.md)** — EU AI Act `Art. 26(5)`/`73` `60-second` API kill-switch, rules fallback, and GenAI egress DLP containment.
+
+### Companion Excel Registers
+1. **[`pillar-03-dora-incident-cbi-clock.xlsx`](pillar-03-dora-incident-cbi-clock.xlsx)** — `Incident_Clock_Dashboard` · `DORA_RTS_Threshold_Triage` · `CBI_4h_72h_30d_Tracker`
+2. **[`pillar-03-crisis-comms-and-capa-log.xlsx`](pillar-03-crisis-comms-and-capa-log.xlsx)** — `Crisis_CAPA_Dashboard` · `Client_Art19_Comms_Log` · `RCA_And_CAPA_Closure_Log` · `Minor_Incident_Aggregation`
