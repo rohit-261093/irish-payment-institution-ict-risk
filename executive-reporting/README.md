@@ -19,7 +19,7 @@ Operational registers across Pillars 1–6 contain hundreds of technical records
 
 | Reporting Forum & Artefact | Frequency | Audience & Sign-Off | Core Contents & Decision Gates |
 | :--- | :--- | :--- | :--- |
-| **Weekly Security & Resilience Flash** | Weekly | `PCF-46` (CTO), `PCF-52` (MLRO), `PCF-14` (CRO) | Critical/KEV patch SLA status, `45m` incident triage metrics, unauthorized script blocks, and Shadow AI proxy blocks. |
+| **Weekly Security & Resilience Flash** | Bi-Weekly | `PCF-46` (CTO), `PCF-52` (MLRO), `PCF-14` (CRO) | Critical/KEV patch SLA status, `45m` incident triage metrics, unauthorized script blocks, and Shadow AI proxy blocks. |
 | **Operational Risk & Resilience Committee (`ORRC`) Pack** | Monthly | Executive Committee (`PCF-1`, `PCF-14`, `PCF-46`, `PCF-52`, `PCF-56`) | Monthly minor incident aggregation (`DORA Art. 8(2)`), `CAPA` closure tracking, `< 90-day` risk exceptions, and vendor DDQ turnaround. |
 | **[Quarterly Board Risk Committee (`BRC`) Pack](q4-2026-board-risk-committee-pack.md)** | Quarterly | Board Risk Committee (`INEDs`) & Statutory Auditors | Consolidated **Enterprise KRI Scorecard**, Pillar 1–6 RAG posture, quarterly BCDR failover results, quarterly AI vendor audit assurance, and `IAF/SEAR` PCF attestations. |
 | **Annual Supervisory & Board Charter Pack** | Annual | Full Board & Central Bank of Ireland (`CBI`) | Annual `CIBS` Impact Tolerance & harm calibration approval, `ICT-SAT` maturity self-assessment, `DORA RoI` XBRL sign-off, and annual `Art. 4` AI literacy report. |
