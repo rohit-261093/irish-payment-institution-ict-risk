@@ -1,89 +1,70 @@
 ---
-title: Pillar 2 — ICT Protection, Asset Management & Change Control
+title: Pillar 2 — ICT Protection, Cryptography, PAM & Change Control Gates
 ---
 
-# Pillar 2: ICT Protection, Asset Management & Change Control
-**Regulatory Basis:** DORA Chapter II (Articles 8–9 & DORA RTS on ICT Risk Management) · Central Bank of Ireland (CBI) Operational Resilience Guidance (*Identify & Prepare*, Guideline 5) · CBI IT & Cybersecurity Risk Guidance · PCI-DSS v4.0 · EU AI Act Article 15
-
----
-
-## 1. What Pillar 2 Means in Practice
-Once Pillar 1 establishes *which* external business services (`CIBS-01` to `CIBS-05`) are critical to the Payment Institution and how long they can tolerate disruption, **Pillar 2 protects the underlying technology stack that keeps those payment rails running**.
-
-In a Central Bank of Ireland–regulated Payment Institution, Pillar 2 answers two operational questions that supervisory inspectors and external auditors test first:
-1. **Structural Containment (Architecture & Scope):** Do we maintain an accurate inventory of every system, cryptographic key, and privileged admin account supporting our payment and safeguarding rails—and have we isolated raw cardholder data inside a minimal **PCI-DSS v4.0 Cardholder Data Environment (CDE)**?
-2. **Operational Hygiene (Patching & Change Control):** Do we remediate critical vulnerabilities within strict risk-based SLAs, and do we prevent untested code releases or unvetted AI integrations from causing production outages or customer data leaks?
+# Pillar 2: ICT Protection, Cryptography, PAM & Change Control Gates
+**Regulatory Basis:** DORA Articles 8–9 · DORA RTS on ICT Risk Management Tools, Methods, Processes and Policies (Delegated Regulation (EU) 2024/1774) · Central Bank of Ireland (`CBI`) Cross-Industry Guidance on Information Technology and Cybersecurity Risks
 
 ---
 
-## 2. Regulatory Alignment Matrix (DORA, CBI & Payment Standards)
+## 1. Why Pillar 2 Works This Way (Plain-English Q&A)
 
-| Regulatory Anchor | Specific Supervisory Requirement | How Pillar 2 Operationalises It |
-| :--- | :--- | :--- |
-| **DORA Art. 8 (Identification)** & **DORA RTS Art. 4–5** | Identify, classify, and document all ICT assets, configurations, and information assets supporting critical functions. | **`ICT_Asset_Inventory`:** Maps every microservice, database, HSM, and AI endpoint directly to its supported `CIBS` ID and 1st Line owner. |
-| **CBI Operational Resilience Guidance — Pillar 1 (*Identify & Prepare*, Guideline 5)** | Map the exact technology and infrastructure dependencies required to deliver Critical or Important Business Services. | **`ICT_Asset_Inventory`:** Proves end-to-end traceability from external payment rails down to AWS/GCP regions and Equinix enclaves. |
-| **DORA Art. 9 (Protection & Prevention)** & **DORA RTS Art. 6–7, 13–14** | Enforce network segmentation, encryption at rest/in transit, and cryptographic key lifecycle rotation. | **`Crypto_And_Key_Lifecycle`:** Tracks AES-256 / TLS 1.3 enforcement, FIPS 140-3 HSM key rotation schedules, and **PCI-DSS v4.0** CDE isolation. |
-| **DORA RTS Art. 20–21** & **CBI IT/Cybersecurity Risk Guidance (*Access Management*)** | Restrict privileged access using MFA, Just-In-Time (JIT) elevation, and periodic recertification. | **`Privileged_Access_Review`:** Enforces 90-day access reviews for HSM key custodians, Core Ledger DBAs, and Safeguarding Bank portal approvers. |
-| **DORA Art. 9(2)** & **DORA RTS Art. 8–10** | Operate automated vulnerability scanning and enforce risk-based patch remediation timelines. | **`Vuln_Remediation_Tracker`:** Auto-calculates `7-day` Critical / CISA KEV and `30-day` High patch deadlines with automated SLA breach alerts. |
-| **DORA RTS Art. 16–17**, **CBI Change Management Guidance**, & **EU AI Act Art. 15** | Govern ICT changes so poorly tested deployments or AI data flows do not compromise availability or data integrity. | **`CICD_Change_Gates`:** Enforces pre-release gates requiring SAST scans, rollback verification, PCI CDE checks, and AI egress DLP validation. |
+### Why not patch every vulnerability strictly in order of CVSS score?
+**Because CVSS scores measure theoretical severity, not exposure on our payment rails.**
+A `CVSS 9.8` flaw on an isolated internal staging server poses far less immediate danger to Irish payment service users than an actively exploited `CVSS 7.8` flaw on an internet-facing SEPA Instant API gateway (`CIBS-01`). In [`pillar-02-vuln-and-change-gate-tracker.xlsx`](pillar-02-vuln-and-change-gate-tracker.xlsx), patch SLAs combine **CVSS severity**, **CISA Known Exploited Vulnerabilities (`KEV`)** status, and **`CIBS` criticality**.
 
----
+### How do you prevent human error or rogue releases from taking down payment rails?
+**By turning release checklists into automated CI/CD hard gates.**
+In fast-moving fintech engineering, manual change advisory boards (`CABs`) either rubber-stamp everything or slow releases to a crawl. Instead, Pillar 2 automates low-risk standard changes while enforcing **hard pipeline gates** on high-risk changes touching `CIBS-01`–`CIBS-05`: no deployment can proceed without automated `SAST/SCA` security scans, verified rollback scripts, peer approval, and automated `PAN`/`PII` data-loss prevention (`DLP`) checks.
 
-## 3. End-to-End Operating Process & Hard Decision Gates
-
-1. **Step 1 — Asset Tagging & PCI-DSS v4.0 CDE Containment:**
-   * Every new microservice, database, or AI endpoint must be tagged in the CMDB with its supported `CIBS` ID, data classification, and PCI-DSS scope (`In-Scope (CDE)`, `Connected-to-CDE`, or `Out-of-Scope (Tokenized)`) inside **`ICT_Asset_Inventory`**.
-   * **Hard Gate:** Any proposed service handling raw card PANs outside the isolated PCI Tokenization Vault (`AST-003`) is blocked at architecture review.
-2. **Step 2 — Cryptographic Key & Quarterly Privileged Access Control:**
-   * Encryption keys and signing certificates are logged in **`Crypto_And_Key_Lifecycle`** with automated 30-day renewal alerts.
-   * High-privilege roles across AWS, Cloud HSM, Core Ledger, and Safeguarding Bank portals undergo mandatory 90-day recertification in **`Privileged_Access_Review`**.
-3. **Step 3 — Risk-Based Vulnerability Triage & Patch SLAs:**
-   * Weekly vulnerability scan findings are triaged in **`Vuln_Remediation_Tracker`** using CVSS severity and CISA Known Exploited Vulnerability (KEV) status:
-     * **Critical (`CVSS >= 9.0`) or CISA KEV:** `7 calendar days`
-     * **High (`CVSS 7.0–8.9`):** `30 calendar days`
-     * **Medium (`CVSS 4.0–6.9`):** `90 calendar days`
-   * **Hard Gate:** Any Critical/KEV finding that cannot be patched within 7 days requires an immediate virtual patch/compensating control and a formal time-bound exception logged in Pillar 1 (`Risk_Exception_Register`).
-4. **Step 4 — CI/CD Pre-Release Change Gate:**
-   * Before deploying changes to production payment or safeguarding services, engineering logs release checks in **`CICD_Change_Gates`**.
-   * **Hard Gate:** Production deployment is blocked unless SAST/secret scans pass, a rollback plan is tested, AI egress DLP rules are verified (for AI-enabled services), and 2nd Line ICT Risk approves high-impact releases.
+### Why are Cloud HSM keys and Privileged Access (`PAM`) tracked together?
+**Because compromised admin credentials or expired cryptographic keys instantly bypass perimeter firewalls.**
+Perimeter security means nothing if an engineer holds permanent root access or an unrotated Tokenization Key Encryption Key (`KEK`). Pillar 2 enforces Just-In-Time (`JIT`) privileged access with hardware `FIDO2` MFA and strict **90-day `PCF` access recertifications**.
 
 ---
 
-## 4. RACI & Accountability Matrix
+## 2. End-to-End Operating Process & Hard Decision Gates
 
-| Protection & Change Activity | CTO / 1st Line Engineering | Security Architecture / SecOps | Head of ICT & InfoSec Risk (2nd Line) | Head of Safeguarding (PCF-56) |
-| :--- | :---: | :---: | :---: | :---: |
-| **Production Asset Tagging & CMDB Accuracy** | **R / A** | **C** | **I / Assurance** | **I** |
-| **PCI-DSS v4.0 CDE Boundary & HSM Key Management** | **R** | **R** | **A / Challenge** | **I** |
-| **Quarterly Privileged Access Recertification (PAM)** | **R** | **C** | **A** | **A (Bank Portals)** |
-| **Vulnerability Patching Within 7d / 30d SLAs** | **R / A** | **C** | **I / Escalation** | **I** |
-| **CI/CD Change Gate Sign-Off (High-Impact / CDE / AI)** | **R** | **C** | **A** | **C (Ledger Changes)** |
+1. **Step 1 — Asset Discovery & `CIBS` Criticality Tagging (`Continuous / CMDB Sync`):**
+   * Every cloud workload, database, API gateway, and HSM partition is inventoried in [`pillar-02-asset-crypto-and-pam-scope.xlsx`](pillar-02-asset-crypto-and-pam-scope.xlsx) (`ICT_Asset_CIBS_Inventory`) and tagged to its parent `CIBS` and encryption standard.
+   * **HARD GATE 1 (Unclassified Asset Gate):** Any cloud resource deployed via Terraform/CI without mandatory `CIBS_ID`, `Data_Classification`, and `Owner` tags is blocked from receiving production network ingress.
+2. **Step 2 — Cryptographic Key Lifecycle & Quarterly `PAM` Recertification (`90-Day Cycle`):**
+   * Cryptographic keys (`AES-256-GCM`, `RSA-4096`, `TLS 1.3`) are tracked in `Cryptographic_Key_Lifecycle` with automated rotation alerts, while privileged entitlements (AWS Root, Cloud HSM Custodians, Depositary Bank Portals) undergo mandatory 90-day review in `PAM_Access_Recertification`.
+   * **HARD GATE 2 (`PAM` Revocation Gate):** Any privileged entitlement not explicitly recertified by its `PCF` / system owner within `90 days` is automatically suspended in IAM/PAM (`REVOKED - OVERDUE`).
+3. **Step 3 — Risk-Tiered Vulnerability & `CISA KEV` Remediation (`Daily Scans`):**
+   * Container and infrastructure scanners feed `Vulnerability_SLA_Tracker`, enforcing hard SLAs: **`<= 7 days`** for Critical (`CVSS >= 9.0`) or `CISA KEV` flaws on `CIBS` assets, **`<= 14 days`** for High (`CVSS 7.0–8.9`), and **`<= 30 days`** for Medium.
+   * **HARD GATE 3 (SLA Breach Escalation Gate):** Any Critical or `CISA KEV` vulnerability breaching its `7-day` window triggers a build freeze on non-security feature releases for that microservice and requires a Pillar 1 Risk Exception.
+4. **Step 4 — CI/CD Pre-Release Security, Rollback & AI Egress `DLP` Gate (`Every Production Release`):**
+   * Every production change is logged in `CICD_Change_Gate_Log` and evaluated against four automated pipeline checks before promotion.
+   * **HARD GATE 4 (Production Promotion Block):** CI/CD pipelines automatically block deployment (`BLOCKED - GATE FAIL`) if any of the following fail: (a) Critical/High `SAST/SCA` vulnerabilities detected, (b) missing tested rollback plan/feature flag, (c) missing peer/2nd-line approval for `CIBS` changes, or (d) missing `PAN`/`PII` egress redaction proxy for AI/LLM integrations (`Pillar 6` link).
+
+---
+
+## 3. RACI & Accountability Matrix
+
+| Pillar 2 Control Activity | CTO (`PCF-46`) | Platform & Payments Engineering (1st Line) | SecOps & AppSec | Head of ICT & InfoSec Risk (2nd Line) | Internal Audit (3rd Line) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Asset Inventory & `CIBS` Tagging Completeness** | **A** | **R** | **C** | **C (Oversight)** | **I** |
+| **FIPS 140-3 HSM Key Ceremonies & Rotation** | **A** | **R** | **R** | **C (Witness)** | **I** |
+| **Quarterly `PAM` Access Recertification (`90-Day`)** | **A** | **R (Entitlement Owners)** | **R (IAM Ops)** | **C (Challenge)** | **I** |
+| **Critical / `CISA KEV` Vulnerability Patching (`<= 7d`)** | **A** | **R** | **R (Triage)** | **C (SLA Escalation)** | **I** |
+| **CI/CD Pre-Release Security & `DLP` Gate Enforcement** | **A** | **R** | **R (Rule Config)** | **C (Gate Policy)** | **I** |
 
 *(**R** = Responsible, **A** = Accountable, **C** = Consulted, **I** = Informed)*
 
 ---
 
-## 5. Target Hygiene Outcomes & KPIs
+## 4. Target Pillar 2 KPIs
 
-| Metric / Outcome | Target Benchmark | How It Is Measured |
+| Metric / Outcome | Target Benchmark | Workbook & Formula Verification |
 | :--- | :--- | :--- |
-| **Critical / CISA KEV Patch SLA** | `>= 95%` remediated within `7 calendar days` | `SLA Verdict` formula in `Vuln_Remediation_Tracker` |
-| **PCI-DSS v4.0 CDE Scope Containment** | `<= 25%` of production assets in CDE scope | `Asset_And_CDE_Dashboard` scope breakdown |
-| **Cryptographic Key Hygiene** | `0` overdue master keys or ISO 20022 signing certs | `Lifecycle Status` in `Crypto_And_Key_Lifecycle` |
-| **Quarterly PAM Recertification** | `100%` of privileged roles reviewed within `90 days` | `Review Status` in `Privileged_Access_Review` |
-| **Production Change Gate Integrity** | `0` high-risk changes deployed without rollback & DLP checks | `Gate Verdict` formula in `CICD_Change_Gates` |
+| **Critical (`CVSS >= 9.0`) & `CISA KEV` Patch SLA** | `>= 95.0%` remediated within `7 calendar days` | `Vulnerability_SLA_Tracker` & `Vuln_Change_Dashboard` |
+| **Quarterly `PAM` Recertification Currency** | `100.0%` of privileged entitlements recertified within `90 days` | `Recertification Status` in `PAM_Access_Recertification` |
+| **Cryptographic Key & Certificate Currency** | `0` expired TLS certificates or overdue HSM key rotations | `Key Status` in `Cryptographic_Key_Lifecycle` |
+| **CI/CD Pre-Release Gate Integrity** | `0` high-risk changes promoted to production without passing all 4 gates | `Gate Verdict` in `CICD_Change_Gate_Log` |
 
 ---
 
-## 6. Supporting Excel Registers
-All live asset inventories, cryptographic schedules, PAM reviews, vulnerability SLAs, and release change gates are maintained across two companion Excel workbooks in this folder:
-
-1. **[`pillar-02-asset-crypto-and-pam-scope.xlsx`](pillar-02-asset-crypto-and-pam-scope.xlsx)**
-   * **`Asset_And_CDE_Dashboard`:** KPI summary cards and PCI-DSS v4.0 CDE scope chart.
-   * **`ICT_Asset_Inventory`:** Master mapping of production services to `CIBS` IDs, hosting regions, and CDE boundaries.
-   * **`Crypto_And_Key_Lifecycle`:** Encryption standards and automated rotation tracking for HSM/KMS keys and certificates.
-   * **`Privileged_Access_Review`:** 90-day recertification tracker for HSM custodians, DBAs, and safeguarding portal approvers.
-2. **[`pillar-02-vuln-and-change-gate-tracker.xlsx`](pillar-02-vuln-and-change-gate-tracker.xlsx)**
-   * **`Hygiene_And_Change_Dashboard`:** Vulnerability SLA posture chart and release gate KPIs.
-   * **`Vuln_Remediation_Tracker`:** Automated CVSS/KEV SLA due-date calculator and breach detector.
-   * **`CICD_Change_Gates`:** Pre-release security, rollback, and AI egress DLP verification log.
+## 5. Supporting Excel Registers
+1. **[`pillar-02-asset-crypto-and-pam-scope.xlsx`](pillar-02-ict-protection-and-change-control/pillar-02-asset-crypto-and-pam-scope.xlsx)** — `Protection_Dashboard` · `ICT_Asset_CIBS_Inventory` · `Cryptographic_Key_Lifecycle` · `PAM_Access_Recertification`
+2. **[`pillar-02-vuln-and-change-gate-tracker.xlsx`](pillar-02-ict-protection-and-change-control/pillar-02-vuln-and-change-gate-tracker.xlsx)** — `Vuln_Change_Dashboard` · `Vulnerability_SLA_Tracker` · `CICD_Change_Gate_Log`
